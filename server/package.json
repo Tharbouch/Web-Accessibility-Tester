@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@axe-core/puppeteer": "^4.6.1",
+    "canvas": "^2.11.2",
+    "express": "^4.18.2",
+    "puppeteer": "^19.9.1"
+  }
+}
