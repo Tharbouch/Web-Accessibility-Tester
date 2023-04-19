@@ -1,1 +1,49 @@
+# Logs
+server/logs
+server/*.log
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+server/pnpm-debug.log*
+server/lerna-debug.log*
+
 server/node_modules
+server/dist
+server/dist-ssr
+server/*.local
+
+# Editor directories and files
+server/.vscode/*
+server/!.vscode/extensions.json
+server/.idea
+server/.DS_Store
+server/*.suo
+server/*.ntvs*
+server/*.njsproj
+server/*.sln
+server/*.sw?
+
+# Logs
+server/logs
+server/*.log
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+server/pnpm-debug.log*
+server/lerna-debug.log*
+
+UI/node_modules
+UI/dist
+UI/dist-ssr
+UI/*.local
+
+# Editor directories and files
+UI/.vscode/*
+UI/!.vscode/extensions.json
+UI/.idea
+UI/.DS_Store
+UI/*.suo
+UI/*.ntvs*
+UI/*.njsproj
+UI/*.sln
+UI/*.sw?
