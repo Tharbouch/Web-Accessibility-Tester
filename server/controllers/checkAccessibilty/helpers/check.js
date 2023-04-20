@@ -1,5 +1,6 @@
 const { AxePuppeteer } = require('@axe-core/puppeteer');
-
+const { mkdir, writeFileSync } = require('fs');
+const { join } = require('path');
 
 async function canHover(element, page) {
     const isHoverable = await page.evaluate(element => {
@@ -27,7 +28,7 @@ async function canHover(element, page) {
     return isHoverable;
 }
 
-module.exports.checkAccessibility = async (page) => {
+module.exports.checkAccessibility = async (page, url) => {
     const accessibilityOptions = {
         xpath: true,
         absolutePaths: true,
@@ -37,6 +38,15 @@ module.exports.checkAccessibility = async (page) => {
         .options(accessibilityOptions)
         .analyze();
 
+
+    const now = new Date().toISOString().replace(/T/, '-').replace(/\..+/, '');
+    const path = join('uploads', url.replace(/\//g, '\\') + ' - ' + now);
+    mkdir(path, { recursive: true }, (err) => {
+        if (err) {
+            return console.error(err);
+        }
+        console.log('Directory created successfully!');
+    });
     const results = await Promise.all(accessibilityResults.violations.map(async (violation) => {
         const issue = await Promise.all(violation.nodes.map(async (node) => {
             if (!page.isClosed()) {
@@ -50,10 +60,33 @@ module.exports.checkAccessibility = async (page) => {
                         boundingBox = await element.boundingBox()
                         if (canBeHovered) {
                             await element.hover()
-                            await element.screenshot({ path: "./uploads/" + target + ".png" })
+
+                            const screenshot = await page.screenshot({
+                                clip: {
+                                    x: boundingBox.x, // add a small margin to the left and right
+                                    y: boundingBox.y, // add a small margin to the top and bottom
+                                    width: boundingBox.width + 20,
+                                    height: boundingBox.height + 20,
+                                },
+                                omitBackground: true, // remove the background
+
+                            });
+                            writeFileSync(join(path, target + '.png'), screenshot);
                         }
                         else {
-                            await element.screenshot({ path: "./uploads/" + target + ".png" })
+
+
+                            const screenshot = await page.screenshot({
+                                clip: {
+                                    x: boundingBox.x, // add a small margin to the left and right
+                                    y: boundingBox.y, // add a small margin to the top and bottom
+                                    width: boundingBox.width + 20,
+                                    height: boundingBox.height + 20,
+                                },
+                                omitBackground: true, // remove the background
+
+                            });
+                            writeFileSync(join(path, target + '.png'), screenshot);
 
                         }
 
@@ -81,10 +114,34 @@ module.exports.checkAccessibility = async (page) => {
 
                                         boundingBox = await element.boundingBox()
                                         if (canBeHovered) {
-                                            await element.screenshot({ path: "./uploads/" + target + ".png" })
+                                            await element.hover();
+
+                                            const screenshot = await page.screenshot({
+                                                clip: {
+                                                    x: boundingBox.x, // add a small margin to the left and right
+                                                    y: boundingBox.y, // add a small margin to the top and bottom
+                                                    width: boundingBox.width + 20,
+                                                    height: boundingBox.height + 20,
+                                                },
+                                                omitBackground: true, // remove the background
+
+                                            });
+                                            writeFileSync(join(path, target + '.png'), screenshot);
                                         }
                                         else {
-                                            await element.screenshot({ path: "./uploads/" + target + ".png" })
+
+
+                                            const screenshot = await page.screenshot({
+                                                clip: {
+                                                    x: boundingBox.x, // add a small margin to the left and right
+                                                    y: boundingBox.y, // add a small margin to the top and bottom
+                                                    width: boundingBox.width + 20,
+                                                    height: boundingBox.height + 20,
+                                                },
+                                                omitBackground: true, // remove the background
+
+                                            });
+                                            writeFileSync(join(path, target + '.png'), screenshot);
 
                                         }
 
