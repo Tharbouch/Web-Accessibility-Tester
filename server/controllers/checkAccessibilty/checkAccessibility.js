@@ -12,9 +12,15 @@ async function accessibilityCheck(req, res) {
     try {
         const page = await getPage(url)
 
-        const results = await checkAccessibility(page, url)
+        const [failed, passed, failedSize, passedSize] = await checkAccessibility(page, url)
 
-        res.json(results);
+        res.json({
+            failedSize,
+            failed: failed,
+            passed: passed,
+            passedSize
+        })
+
     } catch (error) {
         console.log(error);
     }

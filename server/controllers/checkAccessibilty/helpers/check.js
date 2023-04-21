@@ -28,17 +28,72 @@ async function canHover(element, page) {
     return isHoverable;
 }
 
+
+async function elementPositioning(tagetedElement, page, path) {
+    const target = tagetedElement.toString();
+    const element = await page.$(target)
+    const canBeHovered = await canHover(element, page)
+
+    if (element) {
+        try {
+
+            const boundingBox = await element.boundingBox()
+            if (canBeHovered) {
+                await element.hover()
+
+                const screenshot = await page.screenshot({
+                    clip: {
+                        x: boundingBox.x, // add a small margin to the left and right
+                        y: boundingBox.y, // add a small margin to the top and bottom
+                        width: boundingBox.width + 20,
+                        height: boundingBox.height + 20,
+                    },
+                    omitBackground: true, // remove the background
+
+                });
+                writeFileSync(join(path, target + '.png'), screenshot);
+            }
+            else {
+
+                const screenshot = await page.screenshot({
+                    clip: {
+                        x: boundingBox.x, // add a small margin to the left and right
+                        y: boundingBox.y, // add a small margin to the top and bottom
+                        width: boundingBox.width + 20,
+                        height: boundingBox.height + 20,
+                    },
+                    omitBackground: true, // remove the background
+
+                });
+                writeFileSync(join(path, target + '.png'), screenshot);
+            }
+
+        } catch (error) {
+            //wll be added later !important
+        }
+    }
+    else {
+        console.log("not found")
+    }
+}
+
 module.exports.checkAccessibility = async (page, url) => {
+
+    // set up check configuration
     const accessibilityOptions = {
         xpath: true,
         absolutePaths: true,
-        reporter: 'v2'
+        reporter: 'v2',
+        runOnly: ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice']
     };
+
+    // lunch the check
     const accessibilityResults = await new AxePuppeteer(page)
         .options(accessibilityOptions)
         .analyze();
 
 
+    // create new directory to store cpatured elements 
     const now = new Date().toISOString().replace(/T/, '-').replace(/\..+/, '');
     const path = join('uploads', url.replace(/\//g, '\\') + ' - ' + now);
     mkdir(path, { recursive: true }, (err) => {
@@ -47,117 +102,27 @@ module.exports.checkAccessibility = async (page, url) => {
         }
         console.log('Directory created successfully!');
     });
-    const results = await Promise.all(accessibilityResults.violations.map(async (violation) => {
-        const issue = await Promise.all(violation.nodes.map(async (node) => {
+
+
+
+    const failed = await Promise.all(accessibilityResults.violations.map(async (violation) => {
+        const issues = await Promise.all(violation.nodes.map(async (node) => {
             if (!page.isClosed()) {
-                const target = node.target.toString();
-                const element = await page.$(target)
-                const canBeHovered = await canHover(element, page)
-                let boundingBox = null
-                if (element) {
-                    try {
-
-                        boundingBox = await element.boundingBox()
-                        if (canBeHovered) {
-                            await element.hover()
-
-                            const screenshot = await page.screenshot({
-                                clip: {
-                                    x: boundingBox.x, // add a small margin to the left and right
-                                    y: boundingBox.y, // add a small margin to the top and bottom
-                                    width: boundingBox.width + 20,
-                                    height: boundingBox.height + 20,
-                                },
-                                omitBackground: true, // remove the background
-
-                            });
-                            writeFileSync(join(path, target + '.png'), screenshot);
-                        }
-                        else {
-
-
-                            const screenshot = await page.screenshot({
-                                clip: {
-                                    x: boundingBox.x, // add a small margin to the left and right
-                                    y: boundingBox.y, // add a small margin to the top and bottom
-                                    width: boundingBox.width + 20,
-                                    height: boundingBox.height + 20,
-                                },
-                                omitBackground: true, // remove the background
-
-                            });
-                            writeFileSync(join(path, target + '.png'), screenshot);
-
-                        }
-
-                    } catch (error) {
-                        //wll be added later !important
-                    }
-                }
-                else {
-                    boundingBox = null
-                }
+                const target = node.target
+                await elementPositioning(target, page, path)
 
                 return {
                     target,
-                    boundingBox,
                     toBeFixed: await Promise.all(node.any.map(async (related) => {
                         return {
                             message: related.message,
-                            relatedNodes: await Promise.all(related.relatedNodes.map(async (relatedNodes) => {
-                                const target = relatedNodes.target.toString();
-                                const element = await page.$(target)
-                                const canBeHovered = await canHover(element, page)
-                                let boundingBox = null
-                                if (element) {
-                                    try {
-
-                                        boundingBox = await element.boundingBox()
-                                        if (canBeHovered) {
-                                            await element.hover();
-
-                                            const screenshot = await page.screenshot({
-                                                clip: {
-                                                    x: boundingBox.x, // add a small margin to the left and right
-                                                    y: boundingBox.y, // add a small margin to the top and bottom
-                                                    width: boundingBox.width + 20,
-                                                    height: boundingBox.height + 20,
-                                                },
-                                                omitBackground: true, // remove the background
-
-                                            });
-                                            writeFileSync(join(path, target + '.png'), screenshot);
-                                        }
-                                        else {
-
-
-                                            const screenshot = await page.screenshot({
-                                                clip: {
-                                                    x: boundingBox.x, // add a small margin to the left and right
-                                                    y: boundingBox.y, // add a small margin to the top and bottom
-                                                    width: boundingBox.width + 20,
-                                                    height: boundingBox.height + 20,
-                                                },
-                                                omitBackground: true, // remove the background
-
-                                            });
-                                            writeFileSync(join(path, target + '.png'), screenshot);
-
-                                        }
-
-                                    } catch (error) {
-                                        //wll be added later !important
-                                    }
-                                }
-                                else {
-                                    boundingBox = null
-                                }
+                            relatedNodes: related.relatedNodes.length > 0 ? await Promise.all(related.relatedNodes.map(async (relatedNodes) => {
+                                await elementPositioning(relatedNodes.target, page, path)
 
                                 return {
-                                    html: relatedNodes.html,
-                                    boundingBox
+                                    target: relatedNodes.html,
                                 };
-                            }))
+                            })) : []
                         };
                     })),
                 };
@@ -169,9 +134,17 @@ module.exports.checkAccessibility = async (page, url) => {
             impact: violation.impact,
             title: violation.help,
             description: violation.description,
-            issue: issue.filter((item) => item !== null)
+            issues: issues.filter((item) => item !== null)
         };
     }));
 
-    return results;
+    const passed = await Promise.all(accessibilityResults.passes.map((passed) => {
+        return {
+            check: "[" + passed.id + "] " + passed.description,
+            description: passed.help
+        }
+    }))
+    const failedSize = failed.length
+    const passedSize = passed.length
+    return [failed, passed, failedSize, passedSize];
 }
