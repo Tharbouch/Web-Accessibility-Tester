@@ -9,7 +9,9 @@ module.exports.getPage = async (url) => {
             height: 1080,
             deviceScaleFactor: 1,
         });
+        await page.setBypassCSP(true);
         await page.goto(url, { waitUntil: 'networkidle0' });
+
 
         return page;
 
