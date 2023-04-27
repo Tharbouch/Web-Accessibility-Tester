@@ -131,115 +131,57 @@ form .input-field {
     background: linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
 }
 
-/* styles for screens smaller than 768px */
+.help-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px
+}
+
+.help-row a {
+    font-weight: 700
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.button button {
+    height: 50px;
+    background-color: var(--primary-color);
+    color: var(--white-color)
+}
+
 @media (max-width: 767px) {
     .container-login {
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        padding: 0;
+    }
+
+    .container-login>* {
+        width: 100%;
+        margin: 0;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        padding: 30px 20px;
     }
 
     .container-svg {
         width: 100%;
-        padding-bottom: 40px;
+        margin-bottom: 20px;
     }
 
-    .form-wrapper {
-        width: 80%;
-        padding: 45px 20px;
-    }
-}
-
-/* styles for screens between 768px and 1170px */
-@media (min-width: 768px) and (max-width: 1170px) {
-    .container-login {
-        flex-wrap: wrap;
-        justify-content: center;
+    .input-field input {
+        font-size: 14px;
     }
 
-    .container-svg {
-        width: 40%;
-        padding-right: 15px;
-        padding-bottom: 40px;
+    .button button,
+    .switch-buttons button {
+        width: 100%;
+        margin-bottom: 10px;
     }
-
-    .form-wrapper {
-        width: 60%;
-        padding: 45px 20px;
-    }
-}
-
-/* styles for screens larger than 1170px */
-@media (min-width: 1171px) {
-    .container-login {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .container-svg {
-        width: 50%;
-        padding-right: 15px;
-        padding-bottom: 40px;
-    }
-
-    .form-wrapper {
-        width: 40%;
-        padding: 45px 38px;
-    }
-}
-
-/* make form inputs and labels responsive */
-.input-field input {
-    width: 100%;
-    height: 40px;
-    padding: 0 5px;
-    font-size: 16px;
-    background: 0 0;
-    outline: 0;
-    border: none;
-}
-
-.input-field label {
-    position: absolute;
-    top: 50%;
-    left: 5px;
-    transform: translateY(-50%);
-    font-size: 16px;
-    pointer-events: none;
-    transition: .5s;
-}
-
-.input-field span::before {
-    content: '';
-    position: absolute;
-    top: 40px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    transition: .4s;
-    background: var(--primary-color);
-    background: -webkit-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: -o-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: -moz-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-}
-
-input-field input:focus~label,
-.input-field input:valid~label {
-    top: -5px;
-    color: var(--primary-color);
-}
-
-.input-field input:focus~span::before,
-.input-field input:valid~span::before {
-    width: 100%;
-}
-
-/* adjust button sizes for smaller screens */
-.button button,
-.switch-buttons button {
-    padding: 5px 10px;
-    font-size: 14px;
-    line-height: 18px;
-    width: 100px;
 }
