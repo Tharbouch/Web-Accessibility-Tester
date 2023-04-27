@@ -1,3 +1,6 @@
+/* Base styles */
+
+
 :root {
     --primary-color: #1d3557;
     --secondary-color: #cae9ff;
@@ -7,12 +10,20 @@
     --shadow-color: #e5e5e5;
 }
 
-#root {
-    margin: 0 auto;
+#root,
+.container-login {
     min-height: 100vh;
+    margin: 0 auto;
 }
 
 /* Account Access */
+
+.help-row a,
+.input-field input,
+.input-field label {
+    color: var(--primary-color);
+}
+
 
 .container-login {
     display: flex;
@@ -21,15 +32,11 @@
     position: relative;
     width: 100%;
     max-width: 1170px;
-    min-height: 100vh;
-    margin: 0 auto;
     padding: 0 15px;
 }
 
 .container-svg {
     width: 50%;
-
-    /* Flex */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -48,13 +55,10 @@
     border: 1px solid #e9ecee;
     box-sizing: border-box;
     box-shadow: 15px 15px 0 #e5e5e5;
-
-    /* Flex */
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-
 
 .switch-buttons {
     background-color: var(--secondary-color);
@@ -64,10 +68,9 @@
     width: fit-content;
 }
 
-.switch-buttons button,
-.button button {
-    font-size: 18px;
-    padding: 10px 20px 10px 20px;
+.button button,
+.switch-buttons button {
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -77,10 +80,10 @@
     font-size: 16px;
     line-height: 20px;
     text-align: center;
-    letter-spacing: 0.5px;
+    letter-spacing: .5px;
     width: 124px;
     min-width: auto;
-    transition: background-color 0.3s ease-in-out;
+    transition: background-color .3s ease-in-out;
 }
 
 .switch-buttons button.active {
@@ -88,7 +91,6 @@
 }
 
 form .input-field {
-
     position: relative;
     border-bottom: 2px solid #adadad;
     margin: 30px 0;
@@ -99,18 +101,15 @@ form .input-field {
     height: 40px;
     padding: 0 5px;
     font-size: 16px;
-    color: var(--primary-color);
-    background: none;
-    outline: none;
+    background: 0 0;
+    outline: 0;
     border: none;
-
 }
 
 .input-field label {
     position: absolute;
     top: 50%;
     left: 5px;
-    color: var(--primary-color);
     transform: translateY(-50%);
     font-size: 16px;
     pointer-events: none;
@@ -124,15 +123,108 @@ form .input-field {
     left: 0;
     width: 0%;
     height: 2px;
-    transition: all .4s;
+    transition: .4s;
     background: var(--primary-color);
-    background: -webkit-linear-gradient(left, #1D3557, #CAE9FF, #ddeaec);
-    background: -o-linear-gradient(left, #1D3557, #CAE9FF, #ddeaec);
-    background: -moz-linear-gradient(left, #1D3557, #CAE9FF, #ddeaec);
-    background: linear-gradient(left, #1D3557, #CAE9FF, #ddeaec)
+    background: -webkit-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: -o-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: -moz-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
 }
 
-.input-field input:focus~label,
+/* styles for screens smaller than 768px */
+@media (max-width: 767px) {
+    .container-login {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container-svg {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+    .form-wrapper {
+        width: 80%;
+        padding: 45px 20px;
+    }
+}
+
+/* styles for screens between 768px and 1170px */
+@media (min-width: 768px) and (max-width: 1170px) {
+    .container-login {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .container-svg {
+        width: 40%;
+        padding-right: 15px;
+        padding-bottom: 40px;
+    }
+
+    .form-wrapper {
+        width: 60%;
+        padding: 45px 20px;
+    }
+}
+
+/* styles for screens larger than 1170px */
+@media (min-width: 1171px) {
+    .container-login {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .container-svg {
+        width: 50%;
+        padding-right: 15px;
+        padding-bottom: 40px;
+    }
+
+    .form-wrapper {
+        width: 40%;
+        padding: 45px 38px;
+    }
+}
+
+/* make form inputs and labels responsive */
+.input-field input {
+    width: 100%;
+    height: 40px;
+    padding: 0 5px;
+    font-size: 16px;
+    background: 0 0;
+    outline: 0;
+    border: none;
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.input-field span::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    transition: .4s;
+    background: var(--primary-color);
+    background: -webkit-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: -o-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: -moz-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    background: linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+}
+
+input-field input:focus~label,
 .input-field input:valid~label {
     top: -5px;
     color: var(--primary-color);
@@ -143,27 +235,11 @@ form .input-field {
     width: 100%;
 }
 
-.help-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.help-row a {
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.button button {
-    height: 50px;
-    background-color: var(--primary-color);
-    color: var(--white-color);
-
+/* adjust button sizes for smaller screens */
+.button button,
+.switch-buttons button {
+    padding: 5px 10px;
+    font-size: 14px;
+    line-height: 18px;
+    width: 100px;
 }
