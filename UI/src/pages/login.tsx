@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from "../components/Input";
+import '../assets/login.css'
 
-const Login = () => {
+export default function Login() {
     const navigate = useNavigate();
     const [buttonState, setButtonState] = useState(true);
 
     return (
-        <section>
+        <section className="login-section">
             <div className="container-login">
                 <div className="container-svg">
                     <img src="/login.png" alt="illustration of people that have accessibility disabilities" />
@@ -21,7 +22,7 @@ const Login = () => {
                             Sign up
                         </button>
                     </div>
-                    <div className="title">
+                    <div className="form-title">
                         {buttonState ? (
                             <h2>Welcome Back!</h2>
                         ) : (
@@ -42,7 +43,7 @@ const Login = () => {
                                         <label htmlFor="rememberme-button">Remember me</label>
                                     </div>
                                     <div>
-                                        <Link to={"/forgetpassword"}>Forgot Password?</Link>
+                                        <Link to="/password-recovery">Forgot Password?</Link>
                                     </div>
                                 </div>
                                 <div className="button">
@@ -73,7 +74,6 @@ const Login = () => {
     );
 };
 
-export default Login;
 
 
 {

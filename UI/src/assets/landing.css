@@ -1,0 +1,165 @@
+/* home section */
+.home-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    padding: 0 40px;
+    position: relative;
+}
+
+.title {
+    display: block;
+    margin-bottom: 25px;
+    font-weight: 800;
+    font-size: 30px;
+    font-style: normal;
+    line-height: 30px;
+    text-align: center;
+}
+
+.tool-description p {
+    text-align: center;
+    font-style: normal;
+    line-height: 30px;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 1px;
+    padding: 0 240px;
+    margin-bottom: 32px;
+}
+
+.start-button {
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.start-button button {
+    height: 50px;
+    width: fit-content;
+    min-width: auto;
+    padding: 10px 20px;
+    position: relative;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    letter-spacing: .5px;
+    transition: background-color .3s ease-in-out;
+}
+
+.start-button button:hover {
+    background-color: var(--button-color);
+    border: var(--primary-color) 1px solid;
+    transition: background-color .3s ease-in-out;
+}
+
+/* end  home section */
+.description-section {
+    padding: 40px 0;
+}
+
+
+.description-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+    max-width: 1170px;
+    position: relative;
+    padding: 0px 40px;
+}
+
+
+.description-container .left {
+    width: 50%;
+    max-width: 50%;
+
+}
+
+.item,
+.item-top {
+    display: flex;
+}
+
+.item-icon,
+.item-icon-top {
+    min-width: 80px;
+    height: 80px;
+    margin-right: 20px;
+    padding-top: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+.item-icon-top svg,
+.item-icon svg {
+    font-size: 40px;
+}
+
+.description-item p,
+.description-item-top p {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 30px;
+    letter-spacing: 1px;
+    color: var(--text-color);
+}
+
+
+.description-item-top h2 {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 45px;
+    letter-spacing: .5px;
+    color: var(--primary-color);
+    max-width: 435px;
+    margin: 0 0 40px 0;
+}
+
+.description-item-top p {
+
+    max-width: 459px;
+    margin-bottom: 70px;
+}
+
+.item {
+    margin-bottom: 85px;
+    position: relative;
+    margin-left: 100px;
+}
+
+.description-item {
+    padding-left: 15px;
+}
+
+.description-item h3 {
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: .5px;
+    max-width: 330px;
+    margin: 0 0 5px 0;
+    font-size: 20px;
+    line-height: 35px;
+}
+
+.description-item p {
+    margin-bottom: 0;
+    max-width: 330px;
+}
