@@ -1,16 +1,26 @@
 :root {
+  --primary-color: #1d3557;
+  --secondary-color: #cae9ff;
+  --text-color: #1d3557;
+  --button-color: #134e9d;
+  --white-color: #ffffff;
+  --border-color: #e9ecee;
+  --shadow-color: #e5e5e5;
+
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #fff;
+  background-color: #fcfffe;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+
 }
 
 
@@ -20,6 +30,7 @@ body {
   min-height: 100vh;
   width: 100%;
   height: 100%;
+  color: var(--primary-color);
 }
 
 a {
@@ -33,8 +44,14 @@ a:active {
 section {
   width: 100%;
   margin: 0 auto;
-  background-color: #fff;
-  color: #193742;
+  padding: 110px 0px 100px 0px;
+
+}
+
+@media(max-width: 767px) {
+  section {
+    padding: 35px 0 35px 0;
+  }
 }
 
 /*a {
