@@ -15,7 +15,7 @@ function App() {
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route index element={<Landing />} />
-        <Route path='login' element={<Login />} />
+        <Route path='account-access' element={<Login />} />
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='password-recovery' element={<ForgetPassword />} />
         <Route path='*' element={<NotFoud />} />

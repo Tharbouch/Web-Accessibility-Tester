@@ -1,11 +1,201 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from "../components/Input";
 import '../assets/login.css'
+import PasswordInput from "../components/passwordInput";
+import axios, { AxiosRequestConfig } from "axios";
+
+interface SignUpForm {
+    username: string;
+    password: string;
+    fullname: string;
+    email: string;
+    userExists: boolean
+}
+
+interface LogInForm {
+    username: string;
+    password: string;
+}
 
 export default function Login() {
     const navigate = useNavigate();
-    const [buttonState, setButtonState] = useState(true);
+
+    const [buttonState, setButtonState] = useState<boolean>(true);
+    const [loginErrors, setLogInErrors] = useState<LogInForm>({
+        username: "",
+        password: ""
+    })
+    const [signupErrors, setSignUpErrors] = useState<SignUpForm>({
+        username: "",
+        password: "",
+        fullname: "",
+        email: "",
+        userExists: false
+
+    })
+    const [singUpForm, setSingUpForm] = useState<SignUpForm>({
+        username: "",
+        password: "",
+        fullname: "",
+        email: "",
+        userExists: false
+    });
+    const [logInForm, setLogInForm] = useState<LogInForm>({
+        username: "",
+        password: ""
+    });
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        if (buttonState) {
+            setLogInForm((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }))
+        }
+        else {
+            setSingUpForm((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }))
+        }
+
+    };
+
+    const HandelOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        let config: AxiosRequestConfig<any> = {
+            baseURL: 'http://localhost:4000/api/v1/user',
+            method: 'post'
+        }
+
+        let isValid = validateForm()
+
+        if (isValid) {
+            if (buttonState) {
+                config.url = '/login'
+                config.data = logInForm
+                setLogInForm({
+                    username: "",
+                    password: ""
+                })
+            }
+            else {
+                config.url = '/register'
+                config.data = singUpForm
+                setSingUpForm({
+                    username: "",
+                    password: "",
+                    fullname: "",
+                    email: "",
+                    userExists: false
+                })
+            }
+
+            await handelrequest(config)
+        }
+    }
+
+    const handelrequest = async (config: AxiosRequestConfig<any>) => {
+        axios(config)
+            .then((response) => {
+                console.log(response)
+            })
+            .catch((err) => {
+                if (err.message === 'Network Error') {
+                    alert(err.message)
+                }
+                else if (err?.response.status === 500) {
+                    alert(err.response.data.message)
+                }
+                else {
+                    const error = err.response.data.message;
+
+                    if (buttonState) {
+                        if (error.includes("username")) {
+                            setLogInErrors((prevState) => ({
+                                ...prevState,
+                                username: `*${error}`
+                            }));
+                        } else {
+                            setLogInErrors((prevState) => ({
+                                ...prevState,
+                                password: `*${error}`
+                            }));
+                        }
+                    } else {
+                        if (error.includes("user already exists")) {
+                            signupErrors.userExists = true
+                        }
+                    }
+                }
+
+            })
+    }
+
+    const validateForm = (): boolean => {
+        let signUpErrors: SignUpForm = {
+            username: "",
+            password: "",
+            fullname: "",
+            email: "",
+            userExists: false
+        };
+
+        let logInErrors: LogInForm = {
+            username: "",
+            password: ""
+        }
+        let isValid = true;
+
+        if (!buttonState) {
+            if (!singUpForm.username.trim()) {
+                signUpErrors.username = "*Username is required";
+                isValid = false;
+            }
+
+            if (!singUpForm.password.trim()) {
+                signUpErrors.password = "*Password is required";
+                isValid = false;
+            }
+
+            if (!singUpForm.fullname.trim()) {
+                signUpErrors.fullname = "*Full name is required";
+                isValid = false;
+            }
+            else if (!/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{8,}$/.test(singUpForm.password)) {
+                signUpErrors.password = "*Invalid password";
+                isValid = false;
+            }
+
+            if (!singUpForm.email.trim()) {
+                signUpErrors.email = "*Email is required";
+                isValid = false;
+            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(singUpForm.email)) {
+                signUpErrors.email = "*Invalid email address";
+                isValid = false;
+            }
+
+            setSignUpErrors(signUpErrors)
+        }
+        else {
+            if (!logInForm.username.trim()) {
+                logInErrors.username = "*Username is required";
+                isValid = false;
+            }
+
+            if (!logInForm.password.trim()) {
+                logInErrors.password = "*Password is required";
+                isValid = false;
+            }
+            setLogInErrors(logInErrors)
+
+        }
+        return isValid;
+    };
 
     return (
         <section className="login-section">
@@ -15,10 +205,27 @@ export default function Login() {
                 </div>
                 <div className="form-wrapper">
                     <div className="switch-buttons" >
-                        <button style={{ 'backgroundColor': buttonState ? '#1D3557' : '#CAE9FF', "color": buttonState ? '#FFF' : '#003249' }} onClick={() => { setButtonState(!buttonState); }}>
+                        <button style={{ 'backgroundColor': buttonState ? '#1D3557' : '#CAE9FF', "color": buttonState ? '#FFF' : '#003249' }} onClick={(e) => {
+                            e.preventDefault()
+                            setButtonState(!buttonState);
+                            setSingUpForm({
+                                username: "",
+                                password: "",
+                                fullname: "",
+                                email: "",
+                                userExists: false
+                            })
+                        }}>
                             Log in
                         </button>
-                        <button style={{ 'backgroundColor': !buttonState ? '#1D3557' : '#CAE9FF', "color": !buttonState ? '#FFF' : '#003249' }} onClick={() => { setButtonState(!buttonState); }}>
+                        <button style={{ 'backgroundColor': !buttonState ? '#1D3557' : '#CAE9FF', "color": !buttonState ? '#FFF' : '#003249' }} onClick={(e) => {
+                            e.preventDefault()
+                            setButtonState(!buttonState);
+                            setLogInForm({
+                                username: "",
+                                password: ""
+                            })
+                        }}>
                             Sign up
                         </button>
                     </div>
@@ -30,12 +237,13 @@ export default function Login() {
                         )}
                         <p>Please enter your details.</p>
                     </div>
-                    <form className="popup-form">
+                    <form className="popup-form" onSubmit={(e: FormEvent<HTMLFormElement>) => { HandelOnSubmit(e) }} >
                         {buttonState ? (
                             <div className="login">
                                 <div className="inputs">
-                                    <Input classname="input-field" type="text" label="Username" />
-                                    <Input classname="input-field" type="password" label="Password" />
+                                    <Input type="text" label="Username" value={logInForm.username} name="username" handler={handleChange} error={loginErrors.username} />
+                                    <PasswordInput value={logInForm.password} handler={handleChange} error={loginErrors.password} />
+
                                 </div>
                                 <div className="help-row">
                                     <div>
@@ -55,10 +263,10 @@ export default function Login() {
                         ) : (
                             <div className="signup">
                                 <div className="inputs">
-                                    <Input classname="input-field" type="text" label="Full Name" />
-                                    <Input classname="input-field" type="text" label="Username" />
-                                    <Input classname="input-field" type="email" label="Email" />
-                                    <Input classname="input-field" type="password" label="Password" />
+                                    <Input type="text" label="Full Name" value={singUpForm.fullname} name="fullname" handler={handleChange} error={signupErrors.fullname} />
+                                    <Input type="text" label="Username" value={singUpForm.username} name="username" handler={handleChange} error={signupErrors.username} />
+                                    <Input type="email" label="Email" value={singUpForm.email} name="email" handler={handleChange} error={signupErrors.email} />
+                                    <PasswordInput value={singUpForm.password} handler={handleChange} error={signupErrors.password} />
                                 </div>
                                 <div className="button">
                                     <button className="submitButton" type="submit">
@@ -73,76 +281,3 @@ export default function Login() {
         </section>
     );
 };
-
-
-
-{
-    /*    const [formState, setFormState] = useState({
-        username: "",
-        password: "",
-        fullName: "",
-        email: "",
-    });
-    const [formErrors, setFormErrors] = useState({
-        username: "",
-        password: "",
-        fullName: "",
-        email: "",
-    });
-    const [formSubmitted, setFormSubmitted] = useState(false);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setFormSubmitted(true);
-        if (buttonState) {
-            // handle login submit
-        } else {
-            // handle signup submit
-        }
-    };
-
-    const handleChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setFormState((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
-    const validateForm = () => {
-        let errors = {};
-        let isValid = true;
-
-        if (!formState.username.trim()) {
-            errors.username = "Username is required";
-            isValid = false;
-        }
-
-        if (!formState.password.trim()) {
-            errors.password = "Password is required";
-            isValid = false;
-        }
-
-        if (!buttonState) {
-            if (!formState.fullName.trim()) {
-                errors.fullName = "Full name is required";
-                isValid = false;
-            }
-
-            if (!formState.email.trim()) {
-                errors.email = "Email is required";
-                isValid = false;
-            } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formState.email)
-            ) {
-                errors.email = "Invalid email address";
-                isValid = false;
-            }
-        }
-
-        setFormErrors(errors);
-        return isValid;
-    };
-*/
-}
