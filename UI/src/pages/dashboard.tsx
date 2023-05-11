@@ -2,7 +2,7 @@ import React from 'react'
 import '../assets/dashboard.css'
 export default function Dashboard() {
     return (
-        <section className='dashboardv2-section'>
+        <section className='dashboard-section'>
             <div className="search-wrap">
                 <div className="search_box">
                     <input type="text" name='url' autoComplete='off' className="input" placeholder="Type Website's URL" />

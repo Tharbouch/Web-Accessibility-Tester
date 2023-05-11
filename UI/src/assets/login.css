@@ -14,8 +14,6 @@
     padding: 0 40px;
 }
 
-
-
 .help-row a,
 .input-field input,
 .input-field label {
@@ -73,12 +71,25 @@
     transition: background-color .3s ease-in-out;
 }
 
+.input-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.input-field .input-container {
+    width: 95%;
+}
+
+.input-field svg {
+    font-size: 20px;
+    margin-top: 5px;
+}
 
 form .input-field {
     position: relative;
     border-bottom: 2px solid #adadad;
-    margin: 30px 0;
+    margin: 20px 0 10px 0;
 }
 
 .input-field input {
@@ -86,15 +97,17 @@ form .input-field {
     height: 40px;
     padding: 0 5px;
     font-size: 16px;
-    background: 0 0;
-    outline: 0;
+    background: none;
+    outline: none;
     border: none;
+
 }
 
 .input-field label {
     position: absolute;
     top: 50%;
     left: 5px;
+    color: #adadad;
     transform: translateY(-50%);
     font-size: 16px;
     pointer-events: none;
@@ -108,19 +121,38 @@ form .input-field {
     left: 0;
     width: 0%;
     height: 2px;
-    transition: .4s;
-    background: var(--primary-color);
-    background: -webkit-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: -o-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: -moz-linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
-    background: linear-gradient(left, #1d3557, #cae9ff, #ddeaec);
+    -webkit-transition: all .4s;
+    -o-transition: all .4s;
+    -moz-transition: all .4s;
+    transition: all .4s;
+    background: #579BB1;
+    background: -webkit-linear-gradient(left, #134e9d, rgb(198, 220, 225), #ddeaec);
+    background: -o-linear-gradient(left, #134e9d, rgb(198, 220, 225), #ddeaec);
+    background: -moz-linear-gradient(left, #134e9d, rgb(198, 220, 225), #ddeaec);
+    background: linear-gradient(left, #134e9d, rgb(198, 220, 225), #ddeaec)
+}
+
+.input-field input:focus~label,
+.input-field input:valid~label {
+    top: -5px;
+    color: var(--primary-color);
+}
+
+.input-field input:focus~span::before,
+.input-field input:valid~span::before {
+    width: 100%;
+}
+
+.input .error {
+    margin: 0 0 20px 20px;
+    color: #c62828;
 }
 
 .help-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px
+    margin: 20px 0 20px 0;
 }
 
 .help-row a {
@@ -165,7 +197,15 @@ form .input-field {
 
     .form-wrapper {
         width: 100%;
-        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 5px;
+    }
+
+    .popup-form {
+        width: 80%;
     }
 
     .container-svg {
@@ -176,6 +216,7 @@ form .input-field {
     .input-field input {
         font-size: 14px;
     }
+
 
     .button button,
     .switch-buttons button {

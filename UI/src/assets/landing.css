@@ -163,3 +163,81 @@
     margin-bottom: 0;
     max-width: 330px;
 }
+
+/* media in small screens */
+@media (max-width: 767px) {
+
+    .home-section {
+        width: 100%;
+    }
+
+    .home-container {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .home-image {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0 5px;
+    }
+
+    .home-image img {
+        width: 100%;
+    }
+
+    .tool-description p {
+        padding: 0 15px;
+    }
+
+    .description-container {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .description-container .left {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .item {
+        margin-left: 0;
+    }
+
+    .description-item {
+        padding-left: 0px;
+    }
+}
+
+/* media in medium screens */
+@media (min-width: 768px) {
+
+    .home-image {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        padding: 0 5px;
+    }
+
+    .home-image img {
+        width: 100%;
+    }
+
+    .tool-description {
+        width: 50%;
+    }
+
+    .tool-description p {
+        padding: 0 15px;
+    }
+
+
+}
+
+/* media in large screen */
+
+@media (min-width: 992px) {}
+
+/* media in extra large screen */
+@media (min-width: 1200px) {}
