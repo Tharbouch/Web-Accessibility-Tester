@@ -1,8 +1,8 @@
 const route = require('express').Router()
-const accessibilityCheck = require('../controllers/checkAccessibilty/checkAccessibility')
+const accessibilityCheck = require('../Controllers/checkAccessibilty/checkAccessibility')
 
 
-route.get('/check-accessibility', accessibilityCheck);
+route.post('/check-accessibility', accessibilityCheck);
 
 
 module.exports = route

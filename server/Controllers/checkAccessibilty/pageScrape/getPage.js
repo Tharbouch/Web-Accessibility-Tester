@@ -12,7 +12,6 @@ module.exports.getPage = async (url) => {
         await page.setBypassCSP(true);
         await page.goto(url, { waitUntil: 'networkidle0' });
 
-
         return page;
 
     } catch (error) {

@@ -1,5 +1,5 @@
-const { checkAccessibility } = require('./helpers/check')
-const { getPage } = require('./helpers/getPage')
+const { checkAccessibility } = require('./checks/check')
+const { getPage } = require('./pageScrape/getPage')
 
 async function accessibilityCheck(req, res) {
 
@@ -20,6 +20,7 @@ async function accessibilityCheck(req, res) {
             passed: passed,
             passedSize
         })
+        page.close()
 
     } catch (error) {
         console.log(error);
