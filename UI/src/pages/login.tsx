@@ -20,8 +20,12 @@ interface LogInForm {
 
 export default function Login() {
     const navigate = useNavigate();
-
     const [buttonState, setButtonState] = useState<boolean>(true);
+    const [accountCreated, setAccountCreated] = useState<boolean>(false)
+    const [logInForm, setLogInForm] = useState<LogInForm>({
+        username: "",
+        password: ""
+    })
     const [loginErrors, setLogInErrors] = useState<LogInForm>({
         username: "",
         password: ""
@@ -32,7 +36,6 @@ export default function Login() {
         fullname: "",
         email: "",
         userExists: false
-
     })
     const [singUpForm, setSingUpForm] = useState<SignUpForm>({
         username: "",
@@ -40,12 +43,7 @@ export default function Login() {
         fullname: "",
         email: "",
         userExists: false
-    });
-    const [logInForm, setLogInForm] = useState<LogInForm>({
-        username: "",
-        password: ""
-    });
-
+    })
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const name = e.target.name;
         const value = e.target.value;
@@ -61,31 +59,23 @@ export default function Login() {
                 [name]: value,
             }))
         }
-
     };
-
     const HandelOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-
         let config: AxiosRequestConfig<any> = {
             baseURL: 'http://localhost:4000/api/v1/user',
             method: 'post'
         }
-
         let isValid = validateForm()
-
         if (isValid) {
-            if (buttonState) {
-                config.url = '/login'
-                config.data = logInForm
+            config.url = buttonState ? "/login" : "/register"
+            config.data = buttonState ? logInForm : singUpForm
+            buttonState ?
                 setLogInForm({
                     username: "",
                     password: ""
                 })
-            }
-            else {
-                config.url = '/register'
-                config.data = singUpForm
+                :
                 setSingUpForm({
                     username: "",
                     password: "",
@@ -93,16 +83,20 @@ export default function Login() {
                     email: "",
                     userExists: false
                 })
-            }
 
             await handelrequest(config)
         }
     }
-
     const handelrequest = async (config: AxiosRequestConfig<any>) => {
         axios(config)
             .then((response) => {
-                console.log(response)
+                if (response.status === 201) {
+                    setAccountCreated(true)
+                    setButtonState(true)
+                }
+                if (response.status === 200) {
+                    navigate('/')
+                }
             })
             .catch((err) => {
                 if (err.message === 'Network Error') {
@@ -113,7 +107,6 @@ export default function Login() {
                 }
                 else {
                     const error = err.response.data.message;
-
                     if (buttonState) {
                         if (error.includes("username")) {
                             setLogInErrors((prevState) => ({
@@ -128,14 +121,15 @@ export default function Login() {
                         }
                     } else {
                         if (error.includes("user already exists")) {
-                            signupErrors.userExists = true
+                            setSignUpErrors((prevState) => ({
+                                ...prevState,
+                                userExists: true
+                            }));
                         }
                     }
                 }
-
             })
     }
-
     const validateForm = (): boolean => {
         let signUpErrors: SignUpForm = {
             username: "",
@@ -154,21 +148,17 @@ export default function Login() {
         if (!buttonState) {
             if (!singUpForm.username.trim()) {
                 signUpErrors.username = "*Username is required";
-                isValid = false;
             }
 
             if (!singUpForm.password.trim()) {
                 signUpErrors.password = "*Password is required";
-                isValid = false;
             }
 
             if (!singUpForm.fullname.trim()) {
                 signUpErrors.fullname = "*Full name is required";
-                isValid = false;
             }
             else if (!/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{8,}$/.test(singUpForm.password)) {
                 signUpErrors.password = "*Invalid password";
-                isValid = false;
             }
 
             if (!singUpForm.email.trim()) {
@@ -176,6 +166,9 @@ export default function Login() {
                 isValid = false;
             } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(singUpForm.email)) {
                 signUpErrors.email = "*Invalid email address";
+            }
+
+            if (Object.values(signUpErrors).some((error) => error !== "")) {
                 isValid = false;
             }
 
@@ -184,11 +177,12 @@ export default function Login() {
         else {
             if (!logInForm.username.trim()) {
                 logInErrors.username = "*Username is required";
-                isValid = false;
             }
 
             if (!logInForm.password.trim()) {
                 logInErrors.password = "*Password is required";
+            }
+            if (Object.values(logInErrors).some((error) => error !== "")) {
                 isValid = false;
             }
             setLogInErrors(logInErrors)
@@ -229,6 +223,14 @@ export default function Login() {
                             Sign up
                         </button>
                     </div>
+                    {
+                        accountCreated
+                        &&
+                        <div className="success-msg">
+                            <p>Your account has been created successfully</p>
+                        </div>
+                    }
+
                     <div className="form-title">
                         {buttonState ? (
                             <h2>Welcome Back!</h2>
@@ -262,6 +264,7 @@ export default function Login() {
                             </div>
                         ) : (
                             <div className="signup">
+                                {signupErrors.userExists && <p className="error">*user already exists , use unique email and username</p>}
                                 <div className="inputs">
                                     <Input type="text" label="Full Name" value={singUpForm.fullname} name="fullname" handler={handleChange} error={signupErrors.fullname} />
                                     <Input type="text" label="Username" value={singUpForm.username} name="username" handler={handleChange} error={signupErrors.username} />
