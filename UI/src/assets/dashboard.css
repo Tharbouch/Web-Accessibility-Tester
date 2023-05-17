@@ -13,12 +13,13 @@
     position: relative;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .search_box .input {
     width: 40%;
     border: 3px solid var(--primary-color);
-    padding: 5px;
+    padding: 10px 15px;
     margin-right: 10px;
     height: 40px;
     border-radius: 15px;
@@ -51,7 +52,6 @@
     line-height: 20px;
     text-align: center;
     letter-spacing: .5px;
-    margin-top: 3px;
     width: fit-content;
     height: 50px;
 }

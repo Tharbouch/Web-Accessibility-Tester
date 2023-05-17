@@ -7,6 +7,7 @@ import Layout from './components/layout'
 import NotFoud from './pages/NotFound'
 import Dashboard from './pages/dashboard'
 import ForgetPassword from './pages/forgetPassword'
+import Audit from './pages/audit'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,6 +19,7 @@ function App() {
         <Route path='account-access' element={<Login />} />
         <Route path='dashboard' element={<Dashboard />} />
         <Route path='password-recovery' element={<ForgetPassword />} />
+        <Route path='audit' element={<Audit />} />
         <Route path='*' element={<NotFoud />} />
       </Route>
     </Routes>

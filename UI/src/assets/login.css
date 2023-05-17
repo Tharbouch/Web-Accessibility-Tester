@@ -71,6 +71,15 @@
     transition: background-color .3s ease-in-out;
 }
 
+.success-msg {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    background-color: #c8e6c9;
+    border-radius: 10px;
+    color: #16631a;
+}
+
 .input-field {
     display: flex;
     justify-content: space-between;
@@ -148,6 +157,12 @@ form .input-field {
     color: #c62828;
 }
 
+.signup .error {
+    color: #c62828;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
 .help-row {
     display: flex;
     justify-content: space-between;
@@ -169,6 +184,10 @@ form .input-field {
     height: 50px;
     background-color: var(--primary-color);
     color: var(--white-color)
+}
+
+.signup .button {
+    margin-top: 30px;
 }
 
 .button button:hover {
