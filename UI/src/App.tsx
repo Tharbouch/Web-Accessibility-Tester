@@ -8,9 +8,7 @@ import NotFoud from './pages/NotFound'
 import Dashboard from './pages/dashboard'
 import ForgetPassword from './pages/forgetPassword'
 import Audit from './pages/audit'
-
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <Routes>

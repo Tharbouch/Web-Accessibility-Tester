@@ -1,5 +1,4 @@
-import React from 'react'
-import '../assets/dashboard.css'
+
 export default function Dashboard() {
     return (
         <section className='dashboard-section'>

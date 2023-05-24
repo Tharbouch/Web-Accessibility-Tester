@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from "../components/Input";
-import '../assets/login.css'
 import PasswordInput from "../components/passwordInput";
 import axios, { AxiosRequestConfig } from "axios";
 
@@ -195,7 +194,7 @@ export default function Login() {
         <section className="login-section">
             <div className="container-login">
                 <div className="container-svg">
-                    <img src="/login.png" alt="illustration of people that have accessibility disabilities" />
+                    <img src="src/assets/images/login.png" alt="illustration of login" />
                 </div>
                 <div className="form-wrapper">
                     <div className="switch-buttons" >
