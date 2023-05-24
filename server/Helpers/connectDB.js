@@ -6,7 +6,6 @@ const connectDB = () => {
         .then((response) => {
             console.log(`connected successfully to ${response.connection.host}`)
         }).catch((err) => {
-            console.log(err)
             process.exit(1)
         })
 }

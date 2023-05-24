@@ -3,7 +3,8 @@ const { mkdir, writeFileSync } = require('fs');
 const types = require('../issuesTypes/types');
 const { join } = require('path');
 
-async function getDisabilitiesAffected(id) {//check which Disabilities Affected by the issue
+async function getDisabilitiesAffected(id) {
+    //check which Disabilities Affected by the issue
     const DisabilitiesAffected = []
     for (const key in types) {
         if (types.hasOwnProperty(key)) {
@@ -97,7 +98,6 @@ module.exports.checkAccessibility = async (page, url) => {
         const disabilitiesAffected = await getDisabilitiesAffected(violation.id)
         const issues = await Promise.all(violation.nodes.map(async (node, index) => {
             if (!page.isClosed()) {
-                console.log(node.data)
 
                 const target = node.target
                 await elementPositioning(target, page, path, index)
@@ -106,7 +106,6 @@ module.exports.checkAccessibility = async (page, url) => {
                     target: node.html,
                     toBeFixed: await Promise.all(node.any.map(async (related) => {
 
-                        console.log(related.data)
                         return {
                             message: related.message,
                             relatedNodes: related.relatedNodes.length > 0 ? await Promise.all(related.relatedNodes.map(async (relatedNodes, index) => {
