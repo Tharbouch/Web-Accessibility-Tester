@@ -1,4 +1,3 @@
-import '../assets/forgetpassword.css'
 
 export default function ForgetPassword() {
     return (
