@@ -35,7 +35,7 @@ const Landing = () => {
             <section className='home-section'>
                 <div className="home-container">
                     <div className="home-image">
-                        <img src="/src/assets/images/disabledPeople.jpg" alt="illustration of people that have accessibility disabilities" />
+                        <img src="/images/disabledPeople.jpg" alt="illustration of people that have accessibility disabilities" />
                     </div>
                     <div className="tool-description">
                         <h1 className="title">

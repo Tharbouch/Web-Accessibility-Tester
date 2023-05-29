@@ -3,6 +3,53 @@
     margin: 0 auto;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 20px 40px;
+    z-index: 20;
+    box-shadow: 0px 10px 8px 1px rgba(174, 206, 228, 0.29);
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo h1 {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 20px;
+}
+
+.logo svg {
+    font-size: 40px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav a {
+    font-style: normal;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.nav svg {
+    font-size: 30px;
+}
+
+main {
+
+    padding: 50px 0px 100px 0px;
+}
+
 footer {
     width: 100%;
     background-color: var(--extreem-ligth);
@@ -13,17 +60,27 @@ footer {
     justify-content: space-around;
 }
 
+
+
 footer .logo {
     margin: 0;
 }
 
 
+
 /* audit */
 
-.section-loading {
-    padding: 110px 0px 30px 0px;
+.tools-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 30px;
+}
 
-    flex-direction: column;
+.tools-wrapper {
+    display: flex;
+    padding-right: 30px;
+    gap: 50px;
 }
 
 .image-wrapper {
@@ -33,7 +90,7 @@ footer .logo {
 }
 
 .image-wrapper img {
-    width: 30%;
+    width: 25%;
 }
 
 .description-wrapper {
@@ -47,6 +104,7 @@ footer .logo {
     color: #030a13;
     padding: 110px 0px 30px 0px;
     align-items: normal;
+    flex-direction: column;
 }
 
 .section-audit .right,
@@ -86,6 +144,7 @@ footer .logo {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .image-container img {
@@ -120,8 +179,7 @@ footer .logo {
 }
 
 .icon-container {
-    font-size: 18px;
-    padding-top: 4px;
+    font-size: 22px;
 }
 
 .details-wrapper,
@@ -192,8 +250,8 @@ footer .logo {
     text-align: center;
     display: block;
     border-radius: 50%;
-    width: 103.2px;
-    height: 103.2px;
+    width: 103px;
+    height: 103px;
     background-color: white;
     content: "";
 }
@@ -339,8 +397,6 @@ footer .logo {
     outline: none;
     font-size: 16px;
     color: var(--text-color);
-
-
     box-shadow: 0px 6px 8px 1px rgba(255, 248, 224, 0.29);
 }
 
@@ -1054,5 +1110,5 @@ form .input-field {
     justify-content: center;
     align-items: center;
     background-color: #fcfffe;
-    ;
+
 }

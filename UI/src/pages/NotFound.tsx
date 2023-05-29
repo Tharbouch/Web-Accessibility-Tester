@@ -6,7 +6,7 @@ const NotFoud = () => {
                 <h1>Oops!</h1>
                 <p>Page Not Found</p>
                 <div>
-                    <img src="src/assets/images/error404.jpg" alt="" />
+                    <img src="/images/error404.jpg" alt="" />
                 </div>
                 <div >
                     <Link to="/">Visit Our Homepage</Link>

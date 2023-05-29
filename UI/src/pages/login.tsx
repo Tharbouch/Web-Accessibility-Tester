@@ -194,7 +194,7 @@ export default function Login() {
         <section className="login-section">
             <div className="container-login">
                 <div className="container-svg">
-                    <img src="src/assets/images/login.png" alt="illustration of login" />
+                    <img src="/images/login.png" alt="illustration of login" />
                 </div>
                 <div className="form-wrapper">
                     <div className="switch-buttons" >

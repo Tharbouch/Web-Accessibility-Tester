@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FaLowVision, FaTimesCircle, FaChevronDown } from "react-icons/fa";
+import { FaLowVision, FaTimesCircle, FaChevronDown, FaCheckCircle, FaFileDownload } from "react-icons/fa";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners'
@@ -77,6 +77,12 @@ export default function Audit() {
         setDisplay(temp)
     }
 
+    const handelRescan = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault()
+        setIsLoading(true)
+        handleRequest()
+    }
+
     const handleRequest = () => {
         axios({
             url: 'http://localhost:4000/api/v1/check-accessibility',
@@ -103,17 +109,6 @@ export default function Audit() {
             setPassedPercentage(passedPercentage);
             setDisplay(new Array(res.data.failedSize).fill(false))
             setIsLoading(false)
-
-            const cacheData = {
-                violationsNumber: res.data.failedSize,
-                passedNumber: res.data.passedSize,
-                violations: res.data.failed,
-                passed: res.data.passed,
-                violationsPercentage: violationsPercentage,
-                passedPercentage: passedPercentage,
-            };
-            localStorage.setItem('auditCache', JSON.stringify(cacheData));
-
         }).catch((err) => {
             console.warn(err)
         })
@@ -124,59 +119,49 @@ export default function Audit() {
         if (location.state === null) {
             navigate('/')
         }
-        if (location.state.newTest) {
-            handleRequest();
-            location.state.newTest = false
-        }
         else {
-            const cachedData = localStorage.getItem('auditCache');
-            if (cachedData) {
-                const cache = JSON.parse(cachedData);
-                setReport(prevState => ({
-                    ...prevState,
-                    violationsNumber: cache.violationsNumber,
-                    passedNumber: cache.passedNumber,
-                    violations: cache.violations,
-                    passed: cache.passed,
-                    score: 0,
-                }));
-                setViolationsPercentage(cache.violationsPercentage);
-                setPassedPercentage(cache.passedPercentage);
-                setDisplay(new Array(cache.violationsNumber).fill(false))
-                setIsLoading(false);
-                console.log("hi cache")
-            }
-            else {
-                console.log("hi no cache")
-                handleRequest()
-            }
+            handleRequest();
         }
+
     }, [])
 
     return (
-        <>
+
+        <section className='section-audit'>
             {
-                isLoading ?
-                    <section className='section-loading'>
+                isLoading
+                    ?
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <div className='image-wrapper'>
-                            <img src="/src/assets/images/testing.jpg" alt="" />
+                            <img src="/images/testing.jpg" alt="" />
                         </div>
                         <div className='description-wrapper'>
                             <h2>Scanning your page</h2>
                             <SyncLoader color="#134e9d" />
                         </div>
-                    </section>
+                    </div>
                     :
+
                     <>
-                        <section className='section-audit'>
+                        <div className='tools-container'>
+                            <div className='tools-wrapper'>
+                                <div className='rescan-btn-wrap'>
+                                    <button className='rescan-btn'><FaFileDownload /> Download Report</button>
+                                </div>
+                                <div className='rescan-btn-wrap'>
+                                    <button className='rescan-btn' onClick={(e) => { handelRescan(e) }}>Rescan</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex' }}>
                             <div className='left'>
                                 <div className='title-wrapper'>
                                     <h2>
-                                        Analyze result for: www.uca.ma/este
+                                        Analyze result for: {location.state.url}
                                     </h2>
                                 </div>
                                 <div className='image-container'>
-                                    <img src="/src/assets/images/screen.png" alt="" />
+                                    <img src="/images/screen.png" alt="" />
                                 </div>
                             </div>
                             <div className='right'>
@@ -186,13 +171,30 @@ export default function Audit() {
                                             <h2>Status:</h2>
                                         </div>
                                         <div className='details-wrapper'>
-                                            <div className='icon-container'>
-                                                <FaTimesCircle />
-                                            </div>
-                                            <div className='details-container'>
-                                                <h3>NOT COMPLIANT</h3>
-                                                <p>You are currently at risk of accessibility lawsuits</p>
-                                            </div>
+
+                                            {
+                                                report.violationsNumber === 0
+                                                    ?
+                                                    <>
+                                                        <div className='icon-container'>
+                                                            <FaCheckCircle style={{ color: '#4ec708' }} />
+                                                        </div>
+                                                        <div className='details-container'>
+                                                            <h3>COMPLIANT</h3>
+                                                            <p>You are currently not at risk of accessibility lawsuits.</p>
+                                                        </div>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        <div className='icon-container'>
+                                                            <FaTimesCircle style={{ color: '#dd2626' }} />
+                                                        </div>
+                                                        <div className='details-container'>
+                                                            <h3>NOT COMPLIANT</h3>
+                                                            <p>You are currently at risk of accessibility lawsuits</p>
+                                                        </div>
+                                                    </>
+                                            }
                                         </div>
                                     </div>
                                     <div className='result-wrapper'>
@@ -296,11 +298,13 @@ export default function Audit() {
                                     })}</>
                                 </div>
                             </div>
-                        </section >
-                    </>
-            }
+                        </div>
 
-        </>
+                    </>
+
+            }
+        </section >
+
     );
 }
 
