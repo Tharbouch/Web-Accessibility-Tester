@@ -29,6 +29,7 @@ const LunchTest = ({ handleClose }: any) => {
 
     const handelOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
+        handleClose()
         navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, newTest: true } });
     }
 

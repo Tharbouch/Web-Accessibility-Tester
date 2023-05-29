@@ -7,7 +7,7 @@ const PasswordInput = ({ value, handler, error }: any) => {
         < div className="input">
             <div className='input-field'>
                 <div className="input-container">
-                    <input id="Password" value={value} type={!checked ? "password" : "text"} name="password" onChange={(e: ChangeEvent<HTMLInputElement>) => { handler(e) }} required />
+                    <input id="Password" value={value} type={!checked ? "password" : "text"} name="password" autoComplete="false" onChange={(e: ChangeEvent<HTMLInputElement>) => { handler(e) }} required />
                     <span></span>
                     <label htmlFor="Password">Password</label>
                 </div>
