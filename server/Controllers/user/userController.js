@@ -1,6 +1,6 @@
 const User = require('../../Models/user')
 const bcrypt = require('bcrypt')
-
+const { createSecretToken } = require('../../Helpers/creatToken')
 
 const logUser = (req, res, next) => {
     const { username, password } = req.body
@@ -12,12 +12,21 @@ const logUser = (req, res, next) => {
                 bcrypt.compare(password, response.password)
                     .then((match) => {
                         if (match) {
-                            res.status(200)
-                                .json({
-                                    userId: response._id,
-                                    fullname: response.fullname,
-                                    username: response.username,
-                                })
+                            try {
+                                const token = createSecretToken(response.email, response._id)
+                                res
+                                    .cookie('user', token)
+                                    .status(200)
+                                    .json({
+                                        userId: response._id,
+                                        fullname: response.fullname,
+                                        username: response.username,
+                                    })
+                            }
+                            catch (error) {
+                                res.status(500)
+                                next(error)
+                            }
                         }
                         else {
                             res.status(400)
@@ -37,7 +46,6 @@ const logUser = (req, res, next) => {
             res.status(500)
             next(err)
         })
-
 }
 
 const registerUser = (req, res, next) => {
