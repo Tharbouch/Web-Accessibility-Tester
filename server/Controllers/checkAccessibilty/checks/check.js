@@ -3,6 +3,13 @@ const { mkdir, writeFileSync } = require('fs');
 const types = require('../issuesTypes/types');
 const { join } = require('path');
 
+const scores = {
+    minor: 2,
+    moderate: 5,
+    serious: 8,
+    critical: 10
+}
+
 async function getDisabilitiesAffected(id) {
     //check which Disabilities Affected by the issue
     const DisabilitiesAffected = []
@@ -75,7 +82,7 @@ module.exports.checkAccessibility = async (page, url) => {
         xpath: true,
         absolutePaths: true,
         reporter: 'v2',
-        runOnly: ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice']
+        runOnly: ['cat.*', 'wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice']
     };
 
     // lunch the check
@@ -140,7 +147,38 @@ module.exports.checkAccessibility = async (page, url) => {
         }
     }));
 
+    const score = await calculateAccessibilityScore(failed)
+
     const failedSize = failed.length
     const passedSize = passed.length
-    return [failed, passed, failedSize, passedSize];
+    return [failed, passed, failedSize, passedSize, score];
 }
+
+const weights = {
+    critical: 0.4,
+    serious: 0.3,
+    moderate: 0.2,
+    minor: 0.1,
+};
+
+const calculateAccessibilityScore = async (failed) => {
+
+    const criteriaScores = {
+        critical: 0,
+        serious: 0,
+        moderate: 0,
+        minor: 0,
+    };
+
+    failed.forEach((violation) => {
+        criteriaScores[violation.impact] += 1;
+    });
+
+    let weightedSum = 0;
+    Object.keys(weights).forEach((criterion) => {
+        weightedSum += criteriaScores[criterion] * weights[criterion];
+    });
+
+    const accessibilityScore = (1 - weightedSum) * 100;
+    return accessibilityScore;
+};
