@@ -21,6 +21,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [buttonState, setButtonState] = useState<boolean>(true);
     const [accountCreated, setAccountCreated] = useState<boolean>(false)
+    const [isChecked, setIsChecked] = useState(false);
     const [logInForm, setLogInForm] = useState<LogInForm>({
         username: "",
         password: ""
@@ -248,7 +249,7 @@ export default function Login() {
                                 </div>
                                 <div className="help-row">
                                     <div>
-                                        <input type="checkbox" name="" id="rememberme-button" />
+                                        <input type="checkbox" checked={isChecked} onChange={(e) => { setIsChecked(e.target.checked) }} id="rememberme-button" />
                                         <label htmlFor="rememberme-button">Remember me</label>
                                     </div>
                                     <div>

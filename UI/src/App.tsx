@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Login from './pages/login'
 import './App.css'
 import Landing from './pages/landing'
@@ -15,8 +14,8 @@ function App() {
       <Route path='/' element={<Layout />}>
         <Route index element={<Landing />} />
         <Route path='account-access' element={<Login />} />
-        <Route path='dashboard' element={<Dashboard />} />
         <Route path='password-recovery' element={<ForgetPassword />} />
+        <Route path='dashboard' element={<Dashboard />} />
         <Route path='audit' element={<Audit />} />
         <Route path='*' element={<NotFoud />} />
       </Route>

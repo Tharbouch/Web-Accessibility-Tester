@@ -5,18 +5,16 @@ const Layout = () => {
 
     return (<>
         <header>
-            <Link to='/'>
+            <Link aria-label='home page ' to='/'>
                 <div className="logo">
-
                     <TiZoomOutline />
                     <h1>Accessibility Checker</h1>
-
                 </div>
             </Link>
             <div className="nav">
-                <Link to='guides'> Accessibility Guides</Link>
-                <Link to='aboutus'> About us </Link>
-                <Link to='account-access'><FaUserCircle /></Link>
+                <Link to='guides' aria-label='web accessibility guides page '> Accessibility Guides</Link>
+                <Link to='aboutus' aria-label='about us page '> About us </Link>
+                <Link to='account-access' aria-label='login and sign up page'><FaUserCircle /></Link>
             </div>
         </header>
         <main>

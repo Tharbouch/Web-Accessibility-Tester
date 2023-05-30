@@ -97,7 +97,8 @@ export default function Audit() {
                 violationsNumber: res.data.failedSize,
                 passedNumber: res.data.passedSize,
                 violations: res.data.failed,
-                passed: res.data.passed
+                passed: res.data.passed,
+                score: res.data.score
             }))
 
             const total = res.data.failedSize + res.data.passedSize
@@ -203,7 +204,7 @@ export default function Audit() {
                                         </div>
                                         <div className='progress-wrapper'>
                                             <div className={score > 50 ? 'progress-circle over50' : 'progress-circle'}>
-                                                <span>10%</span>
+                                                <span>{report.score}%</span>
                                                 <div className="left-half-clipper">
                                                     <div className="first50-bar" style={{ backgroundColor: score < 50 ? '#fa2929' : score < 90 ? '#fab129' : '#4ec708' }}></div>
                                                     <div className="value-bar" style={{
