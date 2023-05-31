@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
-import { FaLowVision, FaTimesCircle, FaChevronDown, FaCheckCircle, FaFileDownload } from "react-icons/fa";
+import { useEffect, useRef, useState } from 'react'
+import { FaLowVision, FaTimesCircle, FaChevronDown, FaCheckCircle, FaFileDownload, FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners'
 import axios from 'axios';
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { A11y, Navigation, Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 interface ReportType {
     violationsNumber: number;
@@ -24,16 +28,6 @@ interface ReportType {
     }[];
     passed: any[];
     score: number;
-}
-
-interface IssuesType {
-    target: string;
-    toBeFixed: {
-        message: string;
-        relatedNodes: {
-            target: string;
-        }[];
-    }[];
 }
 
 
@@ -105,7 +99,6 @@ export default function Audit() {
             const violationsPercentage = Math.round((res.data.failedSize / total) * 100);
             const passedPercentage = Math.round((res.data.passedSize / total) * 100);
 
-
             setViolationsPercentage(violationsPercentage);
             setPassedPercentage(passedPercentage);
             setDisplay(new Array(res.data.failedSize).fill(false))
@@ -158,7 +151,7 @@ export default function Audit() {
                             <div className='left'>
                                 <div className='title-wrapper'>
                                     <h2>
-                                        Analyze result for: {location.state.url}
+                                        Analyze result for: <br />{location.state.url}
                                     </h2>
                                 </div>
                                 <div className='image-container'>
@@ -284,17 +277,23 @@ export default function Audit() {
                                                         >
                                                             <p>{violation.description}</p>
                                                             <div className='details-description'>
-                                                                <div className='main-elements'>
-                                                                    <h4>Failed Elements</h4>
-                                                                    <ul>
-                                                                        <>
-                                                                            {
-                                                                                violation.issues.map((issue, index) => {
-                                                                                    return console.log(issue)
-                                                                                })
-                                                                            }
-                                                                        </>
-                                                                    </ul>
+                                                                <div className="main-elements">
+                                                                    <div className="swiper-header">
+                                                                        <h4>failed elements</h4>
+                                                                        <div className="swiper-nav-btns">
+                                                                            <FaAngleLeft />
+                                                                            <FaAngleRight />
+                                                                        </div>
+                                                                    </div>
+                                                                    <Swiper
+                                                                        modules={[Navigation, Pagination, A11y]}
+                                                                        spaceBetween={30}
+                                                                        slidesPerView={1}
+                                                                    >
+                                                                        {violation.issues.map((issue, index) => {
+                                                                            return <SwiperSlide key={index}>{issue.target}</SwiperSlide>;
+                                                                        })}
+                                                                    </Swiper>
                                                                 </div>
                                                             </div>
                                                         </motion.div>

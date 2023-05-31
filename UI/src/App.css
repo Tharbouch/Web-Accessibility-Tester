@@ -459,18 +459,25 @@ footer .logo {
     padding-bottom: 20px;
 }
 
-.main-elements ul {
-    list-style: none;
+.main-elements {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.main-elements ul li {
-    padding: 5px 15px;
-    font-size: 14px;
-    background-color: #f8fafb;
+.swiper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.main-elements ul li:nth-child(even) {
-    background-color: #ebf0f2;
+.swiper-nav-btns {
+    display: flex;
+}
+
+.swiper-nav-btns button {
+    margin-right: 10px;
 }
 
 /* dashboard */
@@ -1205,6 +1212,32 @@ form .input-field {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     background-color: #fcfffe;
+}
 
+.model h2 {
+    margin-top: 0;
+    padding-bottom: 50px;
+}
+
+/* swiper */
+
+.swiper-nav-btns button {
+    width: 60px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    outline: none;
+    background-color: hsl(210, 100%, 50%);
+    color: #fff;
+    margin: 0px 0.5rem;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    margin-top: 30px;
+    transition: all .5s;
+}
+
+.swiper-nav-btns button:hover {
+    background-color: hsl(210, 100%, 40%);
+    cursor: pointer;
 }
