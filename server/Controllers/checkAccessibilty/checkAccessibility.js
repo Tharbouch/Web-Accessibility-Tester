@@ -26,14 +26,18 @@ async function accessibilityCheck(req, res, next) {
         testCounts.set(ip, { count, timestamp });
 
 
-        const { url } = req.body;
+        const { url, standard } = req.body;
         try {
             if (!url) {
                 throw new Error('URL is required');
             }
+            if (!standard) {
+                throw new Error('Standard is required')
+            }
+
             const page = await getPage(url);
 
-            const [failed, passed, failedSize, passedSize, score] = await checkAccessibility(page, url);
+            const [failed, passed, failedSize, passedSize, score] = await checkAccessibility(page, url, standard);
 
             res.json({
                 failedSize,
@@ -50,9 +54,13 @@ async function accessibilityCheck(req, res, next) {
             if (error.message === 'Failed to load the website') {
                 res.status(404);
                 next({ message: 'Failed to load the website' });
-            } else if (error.message === 'URL is required') {
+            } if (error.message === 'URL is required') {
                 res.status(400);
                 next({ message: 'URL is required' });
+                if (error.message === 'Standard is required') {
+                    res.status(400);
+                    next({ message: 'Standard is required' });
+                }
             } else {
                 next(error);
             }

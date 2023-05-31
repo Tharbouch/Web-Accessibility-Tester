@@ -3,13 +3,6 @@ const { mkdir, writeFileSync } = require('fs');
 const types = require('../issuesTypes/types');
 const { join } = require('path');
 
-const scores = {
-    minor: 2,
-    moderate: 5,
-    serious: 8,
-    critical: 10
-}
-
 async function getDisabilitiesAffected(id) {
     //check which Disabilities Affected by the issue
     const DisabilitiesAffected = []
@@ -23,7 +16,6 @@ async function getDisabilitiesAffected(id) {
     }
     return DisabilitiesAffected
 }
-
 
 async function elementPositioning(tagetedElement, page, path, index) {
     const target = tagetedElement.toString();
@@ -75,14 +67,14 @@ async function elementPositioning(tagetedElement, page, path, index) {
     }
 }
 
-module.exports.checkAccessibility = async (page, url) => {
+module.exports.checkAccessibility = async (page, url, standard) => {
 
     // set up check configuration
     const accessibilityOptions = {
         xpath: true,
         absolutePaths: true,
         reporter: 'v2',
-        runOnly: ['cat.*', 'wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice']
+        runOnly: standard === "WCAG" ? ['cat.*', 'wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice'] : ['cat.*', 'section508', 'section508.*.*']
     };
 
     // lunch the check
@@ -155,14 +147,18 @@ module.exports.checkAccessibility = async (page, url) => {
 }
 
 const weights = {
-    critical: 0.4,
-    serious: 0.3,
-    moderate: 0.2,
-    minor: 0.1,
+    critical: 0.35,
+    serious: 0.30,
+    moderate: 0.20,
+    minor: 0.15,
 };
 
 const calculateAccessibilityScore = async (failed) => {
 
+    const totalViolation = failed.length
+    if (totalViolation === 0) {
+        return 100
+    }
     const criteriaScores = {
         critical: 0,
         serious: 0,
@@ -176,9 +172,9 @@ const calculateAccessibilityScore = async (failed) => {
 
     let weightedSum = 0;
     Object.keys(weights).forEach((criterion) => {
-        weightedSum += criteriaScores[criterion] * weights[criterion];
+        weightedSum += (criteriaScores[criterion] / totalViolation) * weights[criterion];
     });
 
     const accessibilityScore = (1 - weightedSum) * 100;
-    return accessibilityScore;
+    return Math.round(accessibilityScore);
 };
