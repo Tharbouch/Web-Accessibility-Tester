@@ -96,10 +96,19 @@ const Landing = () => {
                         </div>
                     </div>
                     <div className='right'>
-
+                        <div className='block1'>
+                            <img src="/images/score.png" alt="an exemple of page score " />
+                        </div>
+                        <div className='block2'>
+                            <img src="/images/results.png" alt="an exemple of the number of violantions founded in a page and number of passed tests" />
+                        </div>
+                        <div className='block3'>
+                            <img src="/images/issues.png" alt="details of the violations founded" />
+                        </div>
                     </div>
 
                 </div>
+
             </section>
         </>
     );

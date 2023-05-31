@@ -64,7 +64,6 @@ export default function Audit() {
     const [violationsPercentage, setViolationsPercentage] = useState(0)
     const [passedPercentage, setPassedPercentage] = useState(0)
     const [display, setDisplay] = useState<Array<boolean | null>>([])
-    const [score, setScore] = useState(50)
 
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
@@ -88,7 +87,8 @@ export default function Audit() {
             url: 'http://localhost:4000/api/v1/check-accessibility',
             method: 'post',
             data: {
-                url: location.state.url
+                url: location.state.url,
+                standard: location.state.standard
             }
 
         }).then((res) => {
@@ -171,6 +171,7 @@ export default function Audit() {
                                         <div className='title-container'>
                                             <h2>Status:</h2>
                                         </div>
+                                        <span></span>
                                         <div className='details-wrapper'>
 
                                             {
@@ -202,24 +203,28 @@ export default function Audit() {
                                         <div className="title-container">
                                             <h2>Score:</h2>
                                         </div>
+                                        <span></span>
                                         <div className='progress-wrapper'>
-                                            <div className={score > 50 ? 'progress-circle over50' : 'progress-circle'}>
+                                            <div className={report.score > 50 ? 'progress-circle over50' : 'progress-circle'}>
                                                 <span>{report.score}%</span>
                                                 <div className="left-half-clipper">
-                                                    <div className="first50-bar" style={{ backgroundColor: score < 50 ? '#fa2929' : score < 90 ? '#fab129' : '#4ec708' }}></div>
+                                                    <div className="first50-bar" style={{ backgroundColor: report.score < 50 ? '#fa2929' : report.score < 90 ? '#fab129' : '#4ec708' }}></div>
                                                     <div className="value-bar" style={{
-                                                        transform: `rotate(${Math.round(score * 360 / 100)}deg)`,
-                                                        border: score < 50 ? '10.8px solid #fa2929' : score < 90 ? '10.8px solid #fab129' : '10.8px solid #4ec708'
+                                                        transform: `rotate(${Math.round(report.score * 360 / 100)}deg)`,
+                                                        border: report.score < 50 ? '10.8px solid #fa2929' : report.score < 90 ? '10.8px solid #fab129' : '10.8px solid #4ec708'
                                                     }}></div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div className='note-container'>
+                                            <p>Websites with a score lower than 90% are at risk of accessibility lawsuits</p>
                                         </div>
                                     </div>
                                     <div className='result-wrapper'>
                                         <div className="title-container">
                                             <h2>Results:</h2>
                                         </div>
-
+                                        <span></span>
                                         <div className="bars-wrapper">
                                             <div className='bar-container'>
                                                 <div className="bar-description">
@@ -263,8 +268,8 @@ export default function Audit() {
                                                         <FaLowVision />
                                                         <h3>{violation.title}</h3>
                                                     </div>
-                                                    <div className='status-container'>
-                                                        <span>{violation.impact}</span>
+                                                    <div className='status-container' >
+                                                        <span className={`${violation.impact}`}>{violation.impact}</span>
                                                         <FaChevronDown />
                                                     </div>
                                                 </div>

@@ -67,6 +67,72 @@ footer .logo {
 }
 
 
+/* launch test */
+.search-wrap {
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.search_box {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.params {
+    width: 40%;
+    height: 40px;
+    border: 3px solid var(--primary-color);
+    padding: 10px 15px;
+    border-radius: 15px;
+    box-shadow: 0px 6px 8px 1px rgba(255, 248, 224, 0.29);
+}
+
+.params .input {
+    width: 70%;
+    border: none;
+    height: 100%;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.params select {
+    border: none;
+    height: 100%;
+    outline: none;
+    font-size: 14px;
+    background-color: transparent;
+}
+
+.search_box .btn,
+.rescan-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-color);
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+
+}
+
+.search_box .btn {
+    background: var(--primary-color);
+    padding: 0 15px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    letter-spacing: .5px;
+    width: fit-content;
+    height: 50px;
+}
+
 
 /* audit */
 
@@ -161,6 +227,7 @@ footer .logo {
 
 .result-wrapper {
     display: flex;
+    align-items: center;
     flex-direction: column;
     border: 2px solid var(--border-color);
     box-shadow: 15px 15px 0 rgba(126, 144, 153, .08);
@@ -170,12 +237,29 @@ footer .logo {
     margin-bottom: 20px;
 }
 
+.result-wrapper>span {
+    width: 100%;
+    height: 2px;
+    background-color: #ddeaec;
+    margin: 30px;
+    margin-top: 0;
+}
+
 .result-wrapper .title-container {
     font-style: normal;
     font-weight: 600;
     font-size: 12px;
     line-height: 25px;
 
+}
+
+.title-container {
+    width: 100%;
+    align-items: flex-start;
+}
+
+.note-container {
+    text-align: center;
 }
 
 .icon-container {
@@ -195,6 +279,7 @@ footer .logo {
 .details-container h3 {
     margin-top: 0;
 }
+
 
 
 .progress-wrapper {
@@ -337,7 +422,27 @@ footer .logo {
 .result-id-bar .status-container span {
     padding: 5px 25px;
     border-radius: 40px;
+    width: 70px;
+}
+
+.status-container .minor {
+
+    background-color: #c8f016;
+}
+
+.status-container .moderate {
+
     background-color: #ffd800;
+}
+
+.status-container .serious {
+
+    background-color: #ff9900;
+}
+
+.status-container .critical {
+
+    background-color: #ff4800;
 }
 
 .results-details-wrapper {
@@ -372,57 +477,6 @@ footer .logo {
 .dashboard-section {
     max-width: 1140px;
     flex-direction: column;
-}
-
-.search-wrap {
-    margin-bottom: 30px;
-    width: 100%;
-}
-
-.search_box {
-    width: 100%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.search_box .input {
-    width: 40%;
-    border: 3px solid var(--primary-color);
-    padding: 10px 15px;
-    margin-right: 10px;
-    height: 40px;
-    border-radius: 15px;
-    outline: none;
-    font-size: 16px;
-    color: var(--text-color);
-    box-shadow: 0px 6px 8px 1px rgba(255, 248, 224, 0.29);
-}
-
-.search_box .btn,
-.rescan-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white-color);
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-
-}
-
-.search_box .btn {
-    background: var(--primary-color);
-    padding: 0 15px;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 20px;
-    text-align: center;
-    letter-spacing: .5px;
-    width: fit-content;
-    height: 50px;
 }
 
 .rescan-btn-wrap {
@@ -652,7 +706,7 @@ table tr {
 
 .description-container {
     display: flex;
-    justify-content: space-between;
+    gap: 30px;
     width: 100%;
     margin: 0 auto;
     padding: 0 15px;
@@ -662,10 +716,13 @@ table tr {
 }
 
 
-.description-container .left {
-    width: 50%;
-    max-width: 50%;
+.description-container .right {
+    width: 70%;
+    max-width: 70%;
+}
 
+.description-container .left {
+    width: fit-content
 }
 
 .item,
@@ -740,6 +797,45 @@ table tr {
     margin-bottom: 0;
     max-width: 330px;
 }
+
+
+.description-container .right {
+    display: grid;
+    justify-content: flex-end;
+}
+
+.description-container .right img {
+    max-width: 60%;
+    box-shadow: 15px 15px 0 rgba(126, 144, 153, .08);
+}
+
+.description-container .right .block1,
+.description-container .right .block3 {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.description-container .right .block1 {
+    z-index: 10;
+}
+
+.description-container .right .block1 img,
+.description-container .right .block2 img {
+    max-width: 50%;
+    max-height: 80%;
+}
+
+.description-container .right .block3 {
+    z-index: 0;
+}
+
+
+.description-container .right .block2 {
+    display: flex;
+    z-index: 5;
+    justify-content: center;
+}
+
 
 /* media in small screens */
 @media (max-width: 767px) {
