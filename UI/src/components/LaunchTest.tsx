@@ -26,11 +26,12 @@ const dropIn = {
 const LunchTest = ({ handleClose }: any) => {
     const navigate = useNavigate();
     const [url, setUrl] = useState<string>('')
+    const [standard, setStandard] = useState<string>('WCAG')
 
     const handelOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         handleClose()
-        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, newTest: true } });
+        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, newTest: true } });
     }
 
     return (
@@ -45,7 +46,13 @@ const LunchTest = ({ handleClose }: any) => {
             >
                 <div className="search-wrap">
                     <div className="search_box">
-                        <input type="text" name='url' autoFocus={true} autoComplete='off' className="input" placeholder="Type Website's URL" onChange={(e) => { setUrl(e.target.value) }} />
+                        <div className="params">
+                            <input type="text" name='url' autoFocus={true} autoComplete='off' className="input" placeholder="Type Website's URL" onChange={(e) => { setUrl(e.target.value) }} />
+                            <select name="standard" onChange={(e) => { setStandard(e.target.value) }}>
+                                <option value="WCAG">WCAG</option>
+                                <option value="Section 508">Secton 508</option>
+                            </select>
+                        </div>
                         <button className="btn" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => { handelOnClick(e) }}>Check Website</button>
                     </div>
                 </div>
