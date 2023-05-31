@@ -17,7 +17,8 @@
     "react-icons": "^4.8.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",
-    "react-spinners": "^0.13.8"
+    "react-spinners": "^0.13.8",
+    "swiper": "^9.3.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
