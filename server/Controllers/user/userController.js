@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const { createSecretToken } = require('../../Helpers/creatToken')
 
 const logUser = (req, res, next) => {
-    const { username, password } = req.body
+    const { username, password, preserve } = req.body
 
     User.findOne({ username })
         .exec()
