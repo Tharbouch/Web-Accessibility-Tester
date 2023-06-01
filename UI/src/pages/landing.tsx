@@ -97,7 +97,7 @@ const Landing = () => {
                     </div>
                     <div className='right'>
                         <div className='block1'>
-                            <img src="/images/score.png" alt="an exemple of page score " />
+                            <img src="/images/score.png" />
                         </div>
                         <div className='block2'>
                             <img src="/images/results.png" alt="an exemple of the number of violantions founded in a page and number of passed tests" />

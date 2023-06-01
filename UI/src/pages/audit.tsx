@@ -1,13 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { FaLowVision, FaTimesCircle, FaChevronDown, FaCheckCircle, FaFileDownload, FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { AnimatePresence, motion } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { FaTimesCircle, FaCheckCircle, FaFileDownload } from "react-icons/fa";
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { SyncLoader } from 'react-spinners'
 import axios from 'axios';
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
-import { A11y, Navigation, Pagination } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/pagination';
+import ReultsDetails from '../components/resultsDetails'
 
 interface ReportType {
     violationsNumber: number;
@@ -28,6 +24,7 @@ interface ReportType {
     }[];
     passed: any[];
     score: number;
+    image: string;
 }
 
 
@@ -53,22 +50,16 @@ export default function Audit() {
             ]
         }],
         passed: [{}],
-        score: 0
+        score: 0,
+        image: ''
     })
     const [violationsPercentage, setViolationsPercentage] = useState(0)
     const [passedPercentage, setPassedPercentage] = useState(0)
-    const [display, setDisplay] = useState<Array<boolean | null>>([])
+    const [error, setError] = useState<string>('')
 
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
     const location = useLocation();
-
-    const dispalyResults = (index: number) => {
-
-        const temp = [...display]
-        temp[index] = !temp[index]
-        setDisplay(temp)
-    }
 
     const handelRescan = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
@@ -92,7 +83,8 @@ export default function Audit() {
                 passedNumber: res.data.passedSize,
                 violations: res.data.failed,
                 passed: res.data.passed,
-                score: res.data.score
+                score: res.data.score,
+                image: res.data.image
             }))
 
             const total = res.data.failedSize + res.data.passedSize
@@ -101,10 +93,19 @@ export default function Audit() {
 
             setViolationsPercentage(violationsPercentage);
             setPassedPercentage(passedPercentage);
-            setDisplay(new Array(res.data.failedSize).fill(false))
             setIsLoading(false)
+
+            const cacheData = {
+                violationsNumber: res.data.failedSize,
+                passedNumber: res.data.passedSize,
+                violations: res.data.failed,
+                passed: res.data.passed,
+                violationsPercentage: violationsPercentage,
+                passedPercentage: passedPercentage,
+            };
+            localStorage.setItem('auditCache', JSON.stringify(cacheData));
         }).catch((err) => {
-            console.warn(err)
+            setError(err.response.data.message || err)
         })
     }
 
@@ -113,8 +114,32 @@ export default function Audit() {
         if (location.state === null) {
             navigate('/')
         }
-        else {
+        if (location.state.newTest) {
             handleRequest();
+            location.state.newTest = false
+        }
+        else {
+            const cachedData = localStorage.getItem('auditCache');
+            if (cachedData) {
+                const cache = JSON.parse(cachedData);
+                setReport(prevState => ({
+                    ...prevState,
+                    violationsNumber: cache.violationsNumber,
+                    passedNumber: cache.passedNumber,
+                    violations: cache.violations,
+                    passed: cache.passed,
+                    score: 0,
+                    image: cache.image
+                }));
+                setViolationsPercentage(cache.violationsPercentage);
+                setPassedPercentage(cache.passedPercentage);
+                setIsLoading(false);
+                console.log("hi cache")
+            }
+            else {
+                console.log("hi no cache")
+                handleRequest()
+            }
         }
 
     }, [])
@@ -125,12 +150,19 @@ export default function Audit() {
             {
                 isLoading
                     ?
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div className='loading-container'>
+                        {
+                            error !== '' &&
+                            <>
+                                <h2>{error}</h2>
+                                <Link to="/">go to Homepage</Link>
+                            </>
+                        }
                         <div className='image-wrapper'>
-                            <img src="/images/testing.jpg" alt="" />
+                            <img src="/images/testing.jpg" alt="loading illustration" />
                         </div>
                         <div className='description-wrapper'>
-                            <h2>Scanning your page</h2>
+                            <h3>Scanning your page</h3>
                             <SyncLoader color="#134e9d" />
                         </div>
                     </div>
@@ -155,7 +187,7 @@ export default function Audit() {
                                     </h2>
                                 </div>
                                 <div className='image-container'>
-                                    <img src="/images/screen.png" alt="" />
+                                    <img src={`data:image/png;base64,${report.image}`} alt="website screenshot" />
                                 </div>
                             </div>
                             <div className='right'>
@@ -252,56 +284,7 @@ export default function Audit() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="results-details">
-                                    <> {report.violations.map((violation, index) => {
-                                        return (
-                                            <div className='results-container' key={index}>
-                                                <div className='result-id-bar' onClick={() => { dispalyResults(index) }}>
-                                                    <div className='details-title'>
-                                                        <FaLowVision />
-                                                        <h3>{violation.title}</h3>
-                                                    </div>
-                                                    <div className='status-container' >
-                                                        <span className={`${violation.impact}`}>{violation.impact}</span>
-                                                        <FaChevronDown />
-                                                    </div>
-                                                </div>
-                                                <AnimatePresence>
-                                                    {display[index] && (
-                                                        <motion.div
-                                                            className={`results-details-wrapper ${display[index] ? 'expanded' : ''}`}
-                                                            initial={{ opacity: 0, height: 0 }}
-                                                            animate={{ opacity: 1, height: 'auto' }}
-                                                            exit={{ opacity: 0, height: 0 }}
-                                                            transition={{ duration: 0.3 }}
-                                                        >
-                                                            <p>{violation.description}</p>
-                                                            <div className='details-description'>
-                                                                <div className="main-elements">
-                                                                    <div className="swiper-header">
-                                                                        <h4>failed elements</h4>
-                                                                        <div className="swiper-nav-btns">
-                                                                            <FaAngleLeft />
-                                                                            <FaAngleRight />
-                                                                        </div>
-                                                                    </div>
-                                                                    <Swiper
-                                                                        modules={[Navigation, Pagination, A11y]}
-                                                                        spaceBetween={30}
-                                                                        slidesPerView={1}
-                                                                    >
-                                                                        {violation.issues.map((issue, index) => {
-                                                                            return <SwiperSlide key={index}>{issue.target}</SwiperSlide>;
-                                                                        })}
-                                                                    </Swiper>
-                                                                </div>
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>)
-                                    })}</>
-                                </div>
+                                <ReultsDetails violationsReport={report.violations} failedNumber={report.violationsNumber} />
                             </div>
                         </div>
 
