@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 const PasswordInput = ({ value, handler, error }: any) => {
 
     const [checked, setChecked] = useState<boolean>(false)

@@ -24,14 +24,23 @@ const dropIn = {
     },
 };
 const LunchTest = ({ handleClose }: any) => {
+    const urlRegex = /^(https?|http):\/\/[^\s/$.?#].[^\s]*$/;
+
     const navigate = useNavigate();
     const [url, setUrl] = useState<string>('')
     const [standard, setStandard] = useState<string>('WCAG')
+    const [valid, setValid] = useState<boolean>(true)
 
     const handelOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
-        handleClose()
-        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, newTest: true } });
+        if (urlRegex.test(url)) {
+            handleClose()
+            navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, newTest: true } });
+        }
+        else {
+            setValid(false)
+        }
+
     }
 
     return (
@@ -53,10 +62,15 @@ const LunchTest = ({ handleClose }: any) => {
                                 <option value="WCAG">WCAG</option>
                                 <option value="Section 508">Secton 508</option>
                             </select>
+
                         </div>
                         <button className="btn" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => { handelOnClick(e) }}>Check Website</button>
                     </div>
+
                 </div>
+                {!valid && <div className="error-wrap">
+                    <span>*URL is not valid</span>
+                </div>}
             </motion.div>
         </Backdrop>
     );

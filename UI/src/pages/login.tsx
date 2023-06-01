@@ -68,6 +68,7 @@ export default function Login() {
         }
         let isValid = validateForm()
         if (isValid) {
+
             config.url = buttonState ? "/login" : "/register"
             config.data = buttonState ? logInForm : singUpForm
             buttonState ?
@@ -88,6 +89,7 @@ export default function Login() {
         }
     }
     const handelrequest = async (config: AxiosRequestConfig<any>) => {
+
         axios(config)
             .then((response) => {
                 if (response.status === 201) {
@@ -145,20 +147,25 @@ export default function Login() {
         }
         let isValid = true;
 
+
         if (!buttonState) {
             if (!singUpForm.username.trim()) {
                 signUpErrors.username = "*Username is required";
+                isValid = false;
             }
 
             if (!singUpForm.password.trim()) {
                 signUpErrors.password = "*Password is required";
+                isValid = false;
             }
 
             if (!singUpForm.fullname.trim()) {
                 signUpErrors.fullname = "*Full name is required";
+                isValid = false;
             }
             else if (!/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).{8,}$/.test(singUpForm.password)) {
                 signUpErrors.password = "*Invalid password";
+                isValid = false;
             }
 
             if (!singUpForm.email.trim()) {
@@ -166,9 +173,6 @@ export default function Login() {
                 isValid = false;
             } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(singUpForm.email)) {
                 signUpErrors.email = "*Invalid email address";
-            }
-
-            if (Object.values(signUpErrors).some((error) => error !== "")) {
                 isValid = false;
             }
 
@@ -177,14 +181,14 @@ export default function Login() {
         else {
             if (!logInForm.username.trim()) {
                 logInErrors.username = "*Username is required";
+                isValid = false;
             }
 
             if (!logInForm.password.trim()) {
                 logInErrors.password = "*Password is required";
-            }
-            if (Object.values(logInErrors).some((error) => error !== "")) {
                 isValid = false;
             }
+
             setLogInErrors(logInErrors)
 
         }

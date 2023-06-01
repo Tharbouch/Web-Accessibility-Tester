@@ -13,7 +13,6 @@ export default function ForgetPassword() {
                     <button>Send My Password Reset Link</button>
                 </div>
             </div>
-
         </section>
     )
 }
