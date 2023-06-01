@@ -17,7 +17,7 @@ connectDb()
 app.use(cors({ methods: ["GET", "POST", "PUT", "DELETE"], credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
+app.disable('x-powered-by');
 
 //Routes
 

@@ -1,3 +1,4 @@
+const { json } = require('express');
 const puppeteer = require('puppeteer');
 
 module.exports.getPage = async (url) => {
@@ -12,16 +13,11 @@ module.exports.getPage = async (url) => {
         await page.setBypassCSP(true);
         await page.goto(url, { waitUntil: 'networkidle0' });
 
-        return page;
-
-    } catch (error) {
-        if (
-            error.message.includes('ERR_NAME_NOT_RESOLVED') ||
-            error.message.includes('ERR_CONNECTION_REFUSED') ||
-            error.message.includes('ERR_TIMED_OUT')
-        ) {
-            res.status(404).json({ error: 'Failed to load the website.' });
-        }
+        const image = await page.screenshot()
+        return [page, image];
     }
-
+    catch (error) {
+        console.log(error)
+        throw new Error(error)
+    }
 }

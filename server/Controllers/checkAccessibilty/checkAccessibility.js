@@ -35,7 +35,8 @@ async function accessibilityCheck(req, res, next) {
                 throw new Error('Standard is required')
             }
 
-            const page = await getPage(url);
+            const [page, rawimage] = await getPage(url);
+            const image = rawimage.toString('base64')
 
             const [failed, passed, failedSize, passedSize, score] = await checkAccessibility(page, url, standard);
 
@@ -44,17 +45,24 @@ async function accessibilityCheck(req, res, next) {
                 failed,
                 passed,
                 passedSize,
-                score
+                score,
+                image
             });
 
             // Emit an event to indicate the response has been sent
             accessibilityEmitter.emit('responseSent');
 
         } catch (error) {
-            if (error.message === 'Failed to load the website') {
+            if (
+                error.message.includes('ERR_NAME_NOT_RESOLVED') ||
+                error.message.includes('ERR_CONNECTION_REFUSED') ||
+                error.message.includes('ERR_TIMED_OUT') ||
+                error.message.includes('ERR_NAME_NOT_RESOLVED')
+            ) {
                 res.status(404);
                 next({ message: 'Failed to load the website' });
-            } if (error.message === 'URL is required') {
+            }
+            if (error.message === 'URL is required') {
                 res.status(400);
                 next({ message: 'URL is required' });
                 if (error.message === 'Standard is required') {
@@ -66,7 +74,8 @@ async function accessibilityCheck(req, res, next) {
             }
         }
     } else {
-        res.status(401).json({ message: 'Maximum number of tests reached for the next 24 hours. Please try again later.' });
+        res.status(401)
+        next({ message: 'Maximum number of tests reached for the next 24 hours. Please login or try again later.' });
     }
 }
 
