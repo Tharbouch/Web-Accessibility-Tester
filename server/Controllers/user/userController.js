@@ -4,7 +4,7 @@ const { createSecretToken } = require('../../Helpers/creatToken')
 
 const logUser = (req, res, next) => {
     const { username, password, preserve } = req.body
-
+    console.log(req.body)
     User.findOne({ username })
         .exec()
         .then((response) => {
@@ -15,7 +15,10 @@ const logUser = (req, res, next) => {
                             try {
                                 const token = createSecretToken(response.email, response._id)
                                 res
-                                    .cookie('user', token)
+                                    .cookie('user', token, {
+                                        httpOnly: true,
+                                        secure: true,
+                                    })
                                     .status(200)
                                     .json({
                                         userId: response._id,

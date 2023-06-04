@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 module.exports.getPage = async (url) => {
     try {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({ headless: 'new' });
         const page = await browser.newPage();
         await page.setViewport({
             width: 1920,
