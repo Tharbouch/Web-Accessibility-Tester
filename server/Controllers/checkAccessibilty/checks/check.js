@@ -17,55 +17,6 @@ async function getDisabilitiesAffected(id) {
     return DisabilitiesAffected
 }
 
-async function elementPositioning(tagetedElement, page, path, index) {
-    const target = tagetedElement.toString();
-    const element = await page.$(target)
-
-    if (element) {
-        const boundingBox = await element.boundingBox()
-
-        if (boundingBox !== null) {
-
-            try {
-                await element.hover()
-
-                const screenshot = await page.screenshot({
-                    clip: {
-                        x: boundingBox.x + 50,
-                        y: boundingBox.y + 50,
-                        width: boundingBox.width + 20,
-                        height: boundingBox.height + 20,
-                    },
-                    omitBackground: true, // remove the background
-
-                });
-                writeFileSync(join(path, index + '.png'), screenshot);
-
-            } catch (error) {
-
-                if (error.message.includes('Node is either not clickable or not an HTMLElement')) {
-                    const screenshot = await page.screenshot({
-                        clip: {
-                            x: boundingBox.x, // add a small margin to the left and right
-                            y: boundingBox.y, // add a small margin to the top and bottom
-                            width: boundingBox.width + 20,
-                            height: boundingBox.height + 20,
-                        },
-                        omitBackground: true, // remove the background
-
-                    });
-                    writeFileSync(join(path, index + '.png'), screenshot);
-                }
-
-            }
-        }
-
-
-    }
-    else {
-        console.log("not found")
-    }
-}
 
 module.exports.checkAccessibility = async (page, url, standard) => {
 
@@ -83,14 +34,14 @@ module.exports.checkAccessibility = async (page, url, standard) => {
         .analyze();
 
     // create new directory to store cpatured elements 
-    const now = new Date().toISOString().replace(/T/, '-').replace(/\..+/, '').replace(/:/g, '-');
-    const path = join('uploads', new URL(url).hostname + ' - ' + now);
-    mkdir(path, { recursive: true }, (err) => {
-        if (err) {
-            return console.error(err);
-        }
-        console.log('Directory created successfully!');
-    });
+    // const now = new Date().toISOString().replace(/T/, '-').replace(/\..+/, '').replace(/:/g, '-');
+    // const path = join('uploads', new URL(url).hostname + ' - ' + now);
+    // mkdir(path, { recursive: true }, (err) => {
+    //     if (err) {
+    //         return console.error(err);
+    //     }
+    //     console.log('Directory created successfully!');
+    // });
 
     const failed = await Promise.all(accessibilityResults.violations.map(async (violation) => {
 
@@ -99,7 +50,7 @@ module.exports.checkAccessibility = async (page, url, standard) => {
             if (!page.isClosed()) {
 
                 const target = node.target
-                await elementPositioning(target, page, path, index)
+                //await elementPositioning(target, page, path, index)
 
                 return {
                     target: node.html,
@@ -108,7 +59,7 @@ module.exports.checkAccessibility = async (page, url, standard) => {
                         return {
                             message: related.message,
                             relatedNodes: related.relatedNodes.length > 0 ? await Promise.all(related.relatedNodes.map(async (relatedNodes, index) => {
-                                await elementPositioning(relatedNodes.target, page, path, index)
+                                //await elementPositioning(relatedNodes.target, page, path, index)
 
                                 return {
                                     target: relatedNodes.html,
@@ -178,3 +129,53 @@ const calculateAccessibilityScore = async (failed) => {
     const accessibilityScore = (1 - weightedSum) * 100;
     return Math.round(accessibilityScore);
 };
+
+// async function elementPositioning(tagetedElement, page, path, index) {
+//     const target = tagetedElement.toString();
+//     const element = await page.$(target)
+
+//     if (element) {
+//         const boundingBox = await element.boundingBox()
+
+//         if (boundingBox !== null) {
+
+//             try {
+//                 await element.hover()
+
+//                 const screenshot = await page.screenshot({
+//                     clip: {
+//                         x: boundingBox.x + 50,
+//                         y: boundingBox.y + 50,
+//                         width: boundingBox.width + 20,
+//                         height: boundingBox.height + 20,
+//                     },
+//                     omitBackground: true, // remove the background
+
+//                 });
+//                 writeFileSync(join(path, index + '.png'), screenshot);
+
+//             } catch (error) {
+
+//                 if (error.message.includes('Node is either not clickable or not an HTMLElement')) {
+//                     const screenshot = await page.screenshot({
+//                         clip: {
+//                             x: boundingBox.x, // add a small margin to the left and right
+//                             y: boundingBox.y, // add a small margin to the top and bottom
+//                             width: boundingBox.width + 20,
+//                             height: boundingBox.height + 20,
+//                         },
+//                         omitBackground: true, // remove the background
+
+//                     });
+//                     writeFileSync(join(path, index + '.png'), screenshot);
+//                 }
+
+//             }
+//         }
+
+
+//     }
+//     else {
+//         console.log("not found")
+//     }
+// }

@@ -1,4 +1,3 @@
-const { json } = require('express');
 const puppeteer = require('puppeteer');
 
 module.exports.getPage = async (url) => {
@@ -14,7 +13,8 @@ module.exports.getPage = async (url) => {
         await page.goto(url, { waitUntil: 'networkidle0' });
 
         const image = await page.screenshot()
-        return [page, image];
+       
+        return [browser,page, image];
     }
     catch (error) {
         console.log(error)
