@@ -16,6 +16,7 @@ const logUser = (req, res, next) => {
                                 const token = createSecretToken(response.email, response._id)
                                 res
                                     .cookie('user', token, {
+                                    
                                         httpOnly: true,
                                         secure: true,
                                     })

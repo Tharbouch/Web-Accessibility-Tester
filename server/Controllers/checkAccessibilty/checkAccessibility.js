@@ -1,63 +1,56 @@
 const EventEmitter = require('events');
 const { checkAccessibility } = require('./checks/check');
 const { getPage } = require('./pageScrape/getPage');
-
+const Audit = require('../../Models/audit')
 const accessibilityEmitter = new EventEmitter();
 const testCounts = new Map();
 
 async function accessibilityCheck(req, res, next) {
-    if (!req.cookies.user) {
-        const ip = req.ip;
-        const currentTime = Date.now();
+    const { url, standard, userID } = req.body;
 
-        let { count, timestamp } = testCounts.get(ip) || { count: 0, timestamp: currentTime };
-
-        // Check if 24 hours have passed since the last test
-        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        if (currentTime - timestamp >= twentyFourHours) {
-            // Reset the count and update the timestamp
-            count = 0;
-            timestamp = currentTime;
-        }
-
-        if (count < 5) {
-            // Increment the test count for the IP address
-            count++;
-            testCounts.set(ip, { count, timestamp });
-
-        } else {
-            res.status(401);
-            next({ message: 'Maximum number of tests reached for the next 24 hours. Please login or try again later.' });
-            return; // Return after sending the response
-        }
-    }
-
-    const { url, standard } = req.body;
+    console.log(req.cookies)
     try {
-        if (!url) {
-            throw new Error('URL is required');
+        if (!req.cookies.user) {//Verify user authentication status.
+
+            const ip = req.ip;
+            const currentTime = Date.now();
+
+            let { count, timestamp } = testCounts.get(ip) || { count: 0, timestamp: currentTime };
+
+            // Check if 24 hours have passed since the last test
+            const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            if (currentTime - timestamp >= twentyFourHours) {
+                // Reset the count and update the timestamp
+                count = 0;
+                timestamp = currentTime;
+            }
+
+            if (count < 5) {
+                // Increment the test count for the IP address
+                count++;
+                testCounts.set(ip, { count, timestamp });
+
+                const response = await runTest(url, standard, next);
+                res.json(response);
+                console.log('ahia')
+                // Emit an event to indicate the response has been sent
+                accessibilityEmitter.emit('responseSent');
+            } else {
+                res.status(401);
+                next({ message: 'Maximum number of tests reached for the next 24 hours. Please login or try again later.' });
+            }
+        } else {
+            const response = await runTest(url, standard, next);
+            res.json(response);
+
+            // Save the data to the database
+            await saveDataToDatabase(userID, response);
+
+            // Emit an event to indicate the response has been sent
+            accessibilityEmitter.emit('responseSent');
+
+
         }
-        if (!standard) {
-            throw new Error('Standard is required');
-        }
-
-        const [page, rawimage] = await getPage(url);
-        const image = rawimage.toString('base64');
-
-        const [failed, passed, failedSize, passedSize, score] = await checkAccessibility(page, url, standard);
-
-        res.json({
-            failedSize,
-            failed,
-            passed,
-            passedSize,
-            score,
-            image
-        });
-
-        // Emit an event to indicate the response has been sent
-        accessibilityEmitter.emit('responseSent');
-
     } catch (error) {
         if (
             error.message.includes('ERR_NAME_NOT_RESOLVED') ||
@@ -74,9 +67,44 @@ async function accessibilityCheck(req, res, next) {
             res.status(400);
             next({ message: 'Standard is required' });
         } else {
+            res.status(500)
             next(error);
         }
     }
+
+}
+
+async function runTest(url, standard) {
+    // Verify the presence of the URL and the corresponding standard.
+    if (!url) {
+        throw new Error('URL is required');
+    }
+    if (!standard) {
+        throw new Error('Standard is required');
+    }
+
+    const [browser, page, rawimage] = await getPage(url); // scrape the page
+    const image = rawimage.toString('base64');// convert image binary data into a Base64 encoded string representatio
+
+    const [failed, passed, failedSize, passedSize, score] = await checkAccessibility(page, url, standard); // run test
+
+    await browser.close()
+    return {
+        failedSize,
+        failed,
+        passed,
+        passedSize,
+        score,
+        image
+    };
+
+}
+
+async function saveDataToDatabase(userID, data) {
+
+    // Save the data to the database
+    Audit.create({ owner: userID, audit: data }).then((response) => console.log(response)).catch((err) => { throw err })
+    console.log('wafchkaaal')
 }
 
 // Event listener to close the event after response is sent
