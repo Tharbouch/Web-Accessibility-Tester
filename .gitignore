@@ -33,18 +33,18 @@ server/yarn-error.log*
 server/pnpm-debug.log*
 server/lerna-debug.log*
 
-UI/node_modules
-UI/dist
-UI/dist-ssr
-UI/*.local
+Client/node_modules
+Client/dist
+Client/dist-ssr
+Client/*.local
 
 # Editor directories and files
-UI/.vscode/*
-UI/!.vscode/extensions.json
-UI/.idea
-UI/.DS_Store
-UI/*.suo
-UI/*.ntvs*
-UI/*.njsproj
-UI/*.sln
-UI/*.sw?
+Client/.vscode/*
+Client/!.vscode/extensions.json
+Client/.idea
+Client/.DS_Store
+Client/*.suo
+Client/*.ntvs*
+Client/*.njsproj
+Client/*.sln
+Client/*.sw?

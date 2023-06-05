@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom"
+import { useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
 const NotFoud = () => {
+
     return (
         <section>
             <div className="not-found" >
