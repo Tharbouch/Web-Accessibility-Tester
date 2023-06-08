@@ -3,7 +3,6 @@ const Audit = require('../../../Models/audit')
 
 const getReport = (req, res, next) => {
     const { userID } = req.query
-    console.log(req.query)
     Audit.find({ owner: userID })
         .exec()
         .then((response) => {
