@@ -14,7 +14,7 @@ const PasswordInput = ({ value, handler, error }: any) => {
                 </div>
                 {!checked ? <FaEye onClick={() => { setChecked(!checked) }} /> : <FaEyeSlash onClick={() => { setChecked(!checked) }} />}
             </div>
-            {error !== "" && <p className="error">{error}</p>}
+            {error !== "" && <p className="error-input">{error}</p>}
         </div >)
 };
 

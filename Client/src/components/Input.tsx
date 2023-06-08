@@ -8,7 +8,7 @@ const Input = ({ type, label, value, name, handler, error }: any) => (
             <span></span>
             <label htmlFor={label}>{label}</label>
         </div>
-        {error !== "" && <p className="error">{error}</p>}
+        {error !== "" && <p className="error-input">{error}</p>}
     </div>
 );
 

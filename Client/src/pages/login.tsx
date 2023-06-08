@@ -1,8 +1,9 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from "../components/Input";
 import PasswordInput from "../components/passwordInput";
 import axios, { AxiosRequestConfig } from "axios";
+import { AuthContext, AuthContextType } from "../context/authContext";
 
 interface SignUpForm {
     username: string;
@@ -15,17 +16,21 @@ interface SignUpForm {
 interface LogInForm {
     username: string;
     password: string;
-    preserve: boolean
+    persist: boolean
 }
+
 
 export default function Login() {
     const navigate = useNavigate();
+    const authContext = useContext<AuthContextType | null>(AuthContext)
+    const { authState, authDispatch } = authContext as AuthContextType;
     const [buttonState, setButtonState] = useState<boolean>(true);
+    const [error, setError] = useState<string>('')
     const [accountCreated, setAccountCreated] = useState<boolean>(false)
     const [logInForm, setLogInForm] = useState<LogInForm>({
         username: "",
         password: "",
-        preserve: false
+        persist: false
     })
     const [singUpForm, setSingUpForm] = useState<SignUpForm>({
         username: "",
@@ -76,7 +81,7 @@ export default function Login() {
             setLogInForm({
                 username: "",
                 password: "",
-                preserve: false
+                persist: false
             })
         }
 
@@ -142,15 +147,14 @@ export default function Login() {
         e.preventDefault()
         let isValid = validateForm()
         if (isValid) {
-            const csrfToken = document.cookie.split('; ').find((row) => row.startsWith('_crsf'))?.split('=')[1]
-
+            const csrfToken = document.cookie.split('=')[1]
             await handelrequest({
                 baseURL: 'http://localhost:4000/api/v1/user',
                 url: buttonState ? "/login" : "/register",
                 method: 'post',
                 headers: {
                     "Content-Type": 'application/json',
-                    'X-CSRF-Token': csrfToken,
+                    "X-CSRF-Token": `${csrfToken}`,
                 },
                 data: buttonState ? logInForm : singUpForm,
                 withCredentials: true
@@ -159,7 +163,7 @@ export default function Login() {
                 setLogInForm({
                     username: "",
                     password: "",
-                    preserve: false
+                    persist: false
                 })
                 :
                 setSingUpForm({
@@ -175,13 +179,14 @@ export default function Login() {
     const handelrequest = async (config: AxiosRequestConfig<any>) => {
 
         axios(config)
-            .then((response) => {
+            .then(async (response) => {
                 if (response.status === 201) {
                     setAccountCreated(true)
                     setButtonState(true)
                 }
                 if (response.status === 200) {
-                    navigate('/')
+                    authDispatch({ type: 'LOGIN', user: response.data });
+                    navigate('/dashboard')
                 }
             })
             .catch((err) => {
@@ -189,7 +194,7 @@ export default function Login() {
                     alert(err.message)
                 }
                 else if (err?.response.status === 500) {
-                    alert(err.response.data.message)
+                    setError('something went wrong')
                 }
                 else {
                     const error = err.response.data.message;
@@ -251,13 +256,14 @@ export default function Login() {
                     <form className="popup-form" onSubmit={(e: FormEvent<HTMLFormElement>) => { HandelOnSubmit(e) }} >
                         {buttonState ? (
                             <div className="login">
+                                {error !== '' && <p className="error">{error}</p>}
                                 <div className="inputs">
                                     <Input type="text" label="Username" value={logInForm.username} name="username" handler={handleChange} error={formErrors.username} />
                                     <PasswordInput value={logInForm.password} handler={handleChange} error={formErrors.password} />
                                 </div>
                                 <div className="help-row">
                                     <div>
-                                        <input type="checkbox" checked={logInForm.preserve} onChange={(e) => { setLogInForm((prevState) => ({ ...prevState, preserve: e.target.checked })) }} id="rememberme-button" />
+                                        <input type="checkbox" checked={logInForm.persist} onChange={(e) => { setLogInForm((prevState) => ({ ...prevState, persist: e.target.checked })) }} id="rememberme-button" />
                                         <label htmlFor="rememberme-button">Remember me</label>
                                     </div>
                                     <div>
@@ -272,6 +278,7 @@ export default function Login() {
                             </div>
                         ) : (
                             <div className="signup">
+                                {error !== '' && <p className="error">{error}</p>}
                                 {formErrors.userExists && <p className="error">*user already exists , use unique email and username</p>}
                                 <div className="inputs">
                                     <Input type="text" label="Full Name" value={singUpForm.fullname} name="fullname" handler={handleChange} error={formErrors.fullname} />

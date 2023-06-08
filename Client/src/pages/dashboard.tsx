@@ -1,91 +1,160 @@
-import { useState } from "react";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SyncLoader } from "react-spinners";
+import { AuthContext, AuthContextType } from "../context/authContext";
+
+interface ReportType {
+    owner: string,
+    website: string,
+    lastScan: string
+    audit: Report
+}
+
+interface Report {
+    failedSize: number;
+    passedSize: number;
+    failed: {
+        title: string;
+        impact: string;
+        description: string;
+        issues: {
+            target: string;
+            toBeFixed: {
+                message: string;
+                relatedNodes: {
+                    target: string;
+                }[];
+            }[];
+        }[];
+    }[];
+    passed: any[];
+    score: number;
+    image: string;
+}
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const [url, setUrl] = useState<string>('')
+    const [loading, setLoading] = useState(true)
     const [standard, setStandard] = useState<string>('WCAG')
+    const [reports, setReports] = useState<ReportType[]>([])
+
+    const authContext = useContext<AuthContextType | null>(AuthContext)
+    const { authState, authDispatch } = authContext as AuthContextType;
 
     const handelOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
-        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, newTest: true } });
+        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, userID: authState.user?.userID } });
     }
+    const handleRowClick = (index: number) => {
+        navigate(`/audit?url=${encodeURIComponent(reports[index].website)}`, { state: { url: reports[index].website, report: reports[index] } });
+
+    }
+
+    useEffect(() => {
+        axios({
+            url: 'http://localhost:4000/api/v1/getReport',
+            method: 'get',
+            params: {
+                userID: authState.user?.userID
+            }
+        })
+            .then((response) => {
+                setReports(response.data)
+                setLoading(false)
+            })
+            .catch((err) => {
+                alert(err)
+            })
+    }, [authState])
 
     return (
         <section className='dashboard-section'>
-            <div className="search-wrap">
-                <div className="search_box">
-                    <div className="params">
-                        <input type="text" name='url' autoFocus={true} autoComplete='off' className="input" placeholder="Type Website's URL" onChange={(e) => { setUrl(e.target.value) }} />
-                        <select name="standard" onChange={(e) => { setStandard(e.target.value) }}>
-                            <option value="WCAG">WCAG</option>
-                            <option value="Section 508">Secton 508</option>
-                        </select>
-                    </div>
-                    <button className="btn" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => { handelOnClick(e) }}>Check Website</button>
-                </div>
-            </div>
-            <div className='table-wrapper'>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>
-                                Website
-                            </th>
-                            <th>
-                                Last scan
-                            </th>
-                            <th>
-                                Violations
-                            </th>
-                            <th>
-                                Passed
-                            </th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>www.uca.ma/este</td>
-                            <td>2022-05-26</td>
-                            <td>
-                                <div className='status-container'>
-                                    <p className='violations'>25</p>
+
+            {
+
+                loading
+                    ?
+                    <><>
+                        {console.log(reports)}
+                    </><div className='loading-container'>
+
+                            <div className='image-wrapper'>
+                                <img src="/images/testing.jpg" alt="loading illustration" />
+                            </div>
+                            <div className='description-wrapper'>
+                                <h3>loading</h3>
+                                <SyncLoader color="#134e9d" />
+                            </div>
+                        </div></>
+                    :
+                    <>
+                        <div className="search-wrap">
+                            <div className="search_box">
+                                <div className="params">
+                                    <input type="text" name='url' autoFocus={true} autoComplete='off' className="input" placeholder="Type Website's URL" onChange={(e) => { setUrl(e.target.value); }} />
+                                    <select name="standard" onChange={(e) => { setStandard(e.target.value); }}>
+                                        <option value="WCAG">WCAG</option>
+                                        <option value="Section 508">Secton 508</option>
+                                    </select>
                                 </div>
-                            </td>
-                            <td>
-                                <div className='status-container'>
-                                    <p className='passed'>70</p>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='rescan-btn-wrap'>
-                                    <button className='rescan-btn'>Rescan</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>www.uca.ma/este</td>
-                            <td>2022-05-26</td>
-                            <td>
-                                <div className='status-container'>
-                                    <p className='violations'>25</p>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='status-container'>
-                                    <p className='passed'>70</p>
-                                </div>
-                            </td>
-                            <td>
-                                <div className='rescan-btn-wrap'>
-                                    <button className='rescan-btn'>Rescan</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                                <button className="btn" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => { handelOnClick(e); }}>Check Website</button>
+                            </div>
+                        </div><div className='table-wrapper'>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Website
+                                        </th>
+                                        <th>
+                                            Last scan
+                                        </th>
+                                        <th>
+                                            Violations
+                                        </th>
+                                        <th>
+                                            Passed
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <>
+                                        {
+                                            reports.map((report, index) => {
+                                                console.log(report)
+                                                return (<tr key={index} onClick={() => { handleRowClick(index) }}>
+                                                    <td>{report.website}</td>
+                                                    <td>{report.lastScan.split('T')[0]}</td>
+                                                    <td>
+                                                        <div className='status-container'>
+                                                            <p className='violations'>{report.audit.failedSize}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className='status-container'>
+                                                            <p className='passed'>{report.audit.passedSize}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className='rescan-btn-wrap'>
+                                                            <button className='rescan-btn'>Rescan</button>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>)
+                                            })
+                                        }
+                                    </>
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+
+            }
+
         </section>
     )
 }
