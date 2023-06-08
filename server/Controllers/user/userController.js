@@ -1,6 +1,7 @@
 const User = require('../../Models/user')
 const bcrypt = require('bcrypt')
 const jwt = require("jsonwebtoken")
+const nodemailer = require('nodemailer');
 const { createSecretToken } = require('../../Helpers/creatToken')
 
 const logUser = (req, res, next) => {
@@ -15,7 +16,7 @@ const logUser = (req, res, next) => {
                         .then((match) => {
                             if (match) {
                                 try {
-                                    const token = createSecretToken(response.username, response.fullname, response._id)
+                                    const token = createSecretToken(response.email, response.username, response.fullname, response._id, false)
                                     if (persist) {
                                         res
                                             .cookie('user', token, {
@@ -147,8 +148,55 @@ const logout = (req, res) => {
 
 
 const passwordRecovery = (req, res) => {
+    const { email } = req.body;
+
+    // Generate a password reset token (you can use a library like crypto-random-string)
+    const token = createSecretToken(email, '', '', '', true);
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'tahaharbouch01@gmail.com',
+            pass: 'web@ccessibility2000'
+        }
+    });
+    const mailOptions = {
+        from: 'tahaharbouch01@gmail.com',
+        to: email,
+        subject: 'Password Reset',
+        text: `Click the following link to reset your password: https://localhost/password-reset/${token}`
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Failed to send password reset email' });
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).json({ message: 'Password reset email sent successfully' });
+        }
+    });
+}
+
+const passwordReset = (req, res) => {
+    jwt.verify(req.body.token, process.env.TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            console.log(err)
+            res.status(500)
+            next({ message: 'something went wrong' });
+        } else {
+
+            User.findOneAndUpdate({ email: req.body.password }).then((response) => {
+                res.status(200).json({ message: "updated" })
+            }).catch((err) => {
+                console.log(err)
+                res.status(500)
+                next(err)
+            })
+        }
+    });
 
 }
 
 
-module.exports = { logUser, registerUser, checkLogIn, passwordRecovery, logout }
+module.exports = { logUser, registerUser, checkLogIn, passwordRecovery, logout, passwordReset }
