@@ -36,10 +36,9 @@ function App() {
       <Route path='/' element={<Layout />}>
         <Route index element={<Landing />} />
         <Route path='account-access' element={<Login />} />
-        <Route path='account-recovery' element={<ForgetPassword />} />
-        <Route path="password-reset/:id/:token" element={<NewPassword />} />
+        <Route path='password-recovery' element={<ForgetPassword />} />
+        <Route path="password-reset/:token" element={<NewPassword />} />
         <Route path='dashboard' element={<Dashboard />} />
-        <Route path='audit/:id' element={<Audit />} />
         <Route path='audit' element={<Audit />} />
         <Route path='guides' element={<Guidlines />} />
         <Route path='*' element={<NotFoud />} />
