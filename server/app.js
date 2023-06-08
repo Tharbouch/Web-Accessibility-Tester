@@ -1,7 +1,6 @@
 const cors = require('cors')
 const express = require('express')
 const http = require('http')
-const router = require('express').Router()
 const dovenv = require('dotenv').config()
 const { v4: uuidv4 } = require('uuid');
 const helmet = require('helmet')
@@ -15,28 +14,25 @@ const connectDb = require('./Helpers/connectDB')
 
 
 const app = express()
-const server = http.createServer(app)
 connectDb()
 
 // Middlewares
-app.use(cookieParser())
-router.use(helmet());
-router.use(
-    session({
-        secret: 'ButtercupMadd3007',
-        genid: () => uuidv4(), // Generate a unique session ID
-        cookie: {
-            secure: true, // Set secure flag for HTTPS
-            httpOnly: true, // Set HttpOnly flag for cookie
-        },
-        resave: false,
-        saveUninitialized: true,
-    })
-);
-
-app.use(cors({ origin: 'http://localhost:5173', methods: ["GET", "POST", "PUT", "DELETE"], credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(cors({ origin: 'http://localhost:5173', methods: ["GET", "POST", "PUT", "DELETE"], credentials: true }))
+app.use(
+    session({
+        secret: 'ButtercupMadd3007',
+        genid: () => uuidv4(),
+        cookie: {
+            httpOnly: true,
+            secure: true,
+        },
+        saveUninitialized: true,
+        resave: false,
+    })
+);
+app.use(cookieParser())
 app.disable('x-powered-by');
 
 //Routes
@@ -49,6 +45,8 @@ app.use('/api/v1/user', UserRoutes)
 app.use(errHandler)
 
 //server run
+
+const server = http.createServer(app)
 server.listen(process.env.PORT || 4000, () => {
     console.log(`server on `)
 });

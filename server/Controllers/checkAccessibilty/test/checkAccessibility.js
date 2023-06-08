@@ -1,14 +1,14 @@
 const EventEmitter = require('events');
 const { checkAccessibility } = require('./checks/check');
 const { getPage } = require('./pageScrape/getPage');
-const Audit = require('../../Models/audit')
+const Audit = require('../../../Models/audit')
 const accessibilityEmitter = new EventEmitter();
 const testCounts = new Map();
 
 async function accessibilityCheck(req, res, next) {
     const { url, standard, userID } = req.body;
+    console.log(userID)
 
-    console.log(req.cookies)
     try {
         if (!req.cookies.user) {//Verify user authentication status.
 
@@ -32,7 +32,6 @@ async function accessibilityCheck(req, res, next) {
 
                 const response = await runTest(url, standard, next);
                 res.json(response);
-                console.log('ahia')
                 // Emit an event to indicate the response has been sent
                 accessibilityEmitter.emit('responseSent');
             } else {
@@ -41,11 +40,12 @@ async function accessibilityCheck(req, res, next) {
             }
         } else {
             const response = await runTest(url, standard, next);
-            res.json(response);
 
             // Save the data to the database
-            await saveDataToDatabase(userID, response);
+            await saveDataToDatabase(url, userID, response);
+            console.log('done')
 
+            res.json(response);
             // Emit an event to indicate the response has been sent
             accessibilityEmitter.emit('responseSent');
 
@@ -100,11 +100,14 @@ async function runTest(url, standard) {
 
 }
 
-async function saveDataToDatabase(userID, data) {
-
+async function saveDataToDatabase(url, userID, data) {
+    const date = new Date().toISOString().split('T')[0]
     // Save the data to the database
-    Audit.create({ owner: userID, audit: data }).then((response) => console.log(response)).catch((err) => { throw err })
-    console.log('wafchkaaal')
+    Audit.create({ owner: userID, website: url, lastScan: date, audit: data })
+        .then((response) => {
+            console.log("report been save for the user " + userID + " for the website " + url)
+        })
+        .catch((err) => { console.log(err) })
 }
 
 // Event listener to close the event after response is sent
