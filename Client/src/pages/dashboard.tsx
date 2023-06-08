@@ -129,7 +129,6 @@ export default function Dashboard() {
                                     <>
                                         {
                                             reports.map((report, index) => {
-                                                console.log(report)
                                                 return (
                                                     <tr key={index} >
                                                         <td >{report.website}</td>
