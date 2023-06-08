@@ -3,27 +3,163 @@
     margin: 0 auto;
 }
 
+
+.loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -45%);
+}
+
+/* header */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 20px 40px;
+    z-index: 20;
+    box-shadow: 0px 10px 8px 1px rgba(174, 206, 228, 0.29);
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo h1 {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 20px;
+}
+
+.logo svg {
+    font-size: 40px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav a,
+header span {
+    font-style: normal;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+header span {
+    font-weight: 500;
+}
+
+
+.nav svg {
+    font-size: 30px;
+}
+
+header .nav-btn {
+    display: none;
+    padding: 5px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--textColor);
+    opacity: 0;
+    font-size: 1.8rem;
+}
+
+@media only screen and (max-width: 1024px) {
+    header .nav-btn {
+        display: block;
+        opacity: 1;
+    }
+
+    header .nav {
+        display: none;
+    }
+
+    header .responsive_nav {
+        position: fixed;
+        top: -100vh;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        background-color: var(--white-color);
+        transition: 1s;
+        transform: translateY(100vh);
+    }
+
+    .nav .nav-close-btn {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+    }
+}
+
+/* end header */
 main {
 
-    padding: 50px 0px 100px 0px;
+    padding: 100px 0px 200px 0px;
 }
 
 footer {
     width: 100%;
-    background-color: var(--extreem-ligth);
+    background-color: #202223;
+    position: relative;
+    z-index: 2;
     color: white;
     text-align: center;
+    margin-bottom: 0px;
+}
+
+footer .footer-nav {
+    list-style-type: none;
     display: flex;
-    flex-direction: row;
     justify-content: space-around;
+    padding-top: 70px;
+    padding-bottom: 69px;
 }
 
-
-
-footer .logo {
-    margin: 0;
+footer .h3 {
+    font-style: normal;
+    line-height: 40px;
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
+.footer-nav li .sublist {
+    text-align: start;
+    list-style: none;
+    line-height: 27px;
+    color: #fff;
+}
+
+.sublist a {
+    font-weight: 400;
+    color: #fff;
+    text-decoration: none;
+}
+
+.sublist a:active {
+    text-decoration: none;
+}
 
 /* launch test */
 .search-wrap {
@@ -468,6 +604,7 @@ footer .logo {
 .dashboard-section {
     max-width: 1140px;
     flex-direction: column;
+    overflow-x: auto;
 }
 
 .rescan-btn-wrap,
@@ -495,7 +632,7 @@ footer .logo {
 
 .table-wrapper {
     margin-top: 30px;
-    min-width: 1000px !important;
+    min-width: fit-content;
     width: 100%;
     box-shadow: 0px 5px 12px -12px rgba(0, 0, 0, 0.29);
 }
@@ -559,6 +696,20 @@ table tbody td {
 
 table tr {
     border-bottom: 4px solid var(--shadow-color);
+}
+
+@media only screen and (max-width: 728px) {
+    .search_box {
+        flex-direction: column;
+    }
+
+    .params {
+        width: fit-content;
+    }
+
+    .params .input {
+        width: 60%;
+    }
 }
 
 /* forgetPassword */
@@ -1019,6 +1170,7 @@ table tr {
     margin-top: 5px;
 }
 
+
 form .input-field {
     position: relative;
     border-bottom: 2px solid #adadad;
@@ -1076,12 +1228,13 @@ form .input-field {
     width: 100%;
 }
 
-.input .error {
+.input .error-input {
     margin: 0 0 20px 20px;
     color: #c62828;
 }
 
-.signup .error {
+form .error {
+    text-align: center;
     color: #c62828;
     margin-top: 5px;
     margin-bottom: 30px;
@@ -1218,23 +1371,39 @@ form .input-field {
     padding-bottom: 50px;
 }
 
-/* swiper */
+/* guidlines */
 
-.swiper-nav-btns button {
-    width: 60px;
-    height: 50px;
-    border-radius: 50px;
-    border: none;
-    outline: none;
-    background-color: hsl(210, 100%, 50%);
-    color: #fff;
-    margin: 0px 0.5rem;
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    margin-top: 30px;
-    transition: all .5s;
+.guidlines-section {
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
 }
 
-.swiper-nav-btns button:hover {
-    background-color: hsl(210, 100%, 40%);
-    cursor: pointer;
+.guidlines-section p {
+    font-weight: 500;
+}
+
+.guidlines-section img {
+    width: 728px;
+}
+
+.guidlines-section .list-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.guidlines-section ol,
+.guidlines-section ul {
+    text-align: left
+}
+
+.guidlines-section .content-container {
+    margin: 0;
+    padding: 80px 0;
+}
+
+.guidlines-section .gray {
+    background: #F8F8F8;
+
 }
