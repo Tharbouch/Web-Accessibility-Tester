@@ -505,7 +505,7 @@ footer .h3 {
 }
 
 .results-container {
-    margin: 10px 25px;
+    margin: 25px 25px;
     border: 2px solid var(--border-color);
     border-radius: 20px;
     box-shadow: 12px 30px 17px -11px rgba(126, 144, 153, .35);
@@ -532,6 +532,15 @@ footer .h3 {
     justify-content: center;
     align-items: center;
     gap: 10px;
+}
+
+.details-title .disability-icons {
+    color: var(--primary-color);
+    padding: 5px 20px;
+}
+
+.details-title .disability-icons svg {
+    font-size: 18px;
 }
 
 .result-id-bar .status-container {

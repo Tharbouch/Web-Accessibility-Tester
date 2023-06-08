@@ -14,6 +14,7 @@ interface ReportType {
     violations: {
         title: string;
         impact: string;
+        disabilitiesAffected:string[]
         description: string;
         issues: {
             target: string;
@@ -41,6 +42,7 @@ export default function Audit() {
         violations: [{
             title: '',
             impact: '',
+            disabilitiesAffected:[],
             description: '',
             issues: [
                 {

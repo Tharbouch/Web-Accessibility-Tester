@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { FaLowVision, FaChevronDown, FaAngleRight, FaAngleLeft } from 'react-icons/fa'
 import { AnimatePresence, motion } from 'framer-motion';
+import ArrayCheckComponent from "./disabilityIcons";
 
 interface ViolationsType {
     title: string;
     impact: string;
+    disabilitiesAffected: string[];
     description: string;
     issues: {
         target: string;
@@ -39,7 +41,8 @@ const ReultsDetails = ({ violationsReport, failedNumber }: ResultsDetailsProps) 
                     <div className='results-container' key={index}>
                         <div className='result-id-bar' onClick={() => { dispalyResults(index) }}>
                             <div className='details-title'>
-                                <FaLowVision />
+                                <ArrayCheckComponent values={violation.disabilitiesAffected} />
+                                <span>|</span>
                                 <h3>{violation.title}</h3>
                             </div>
                             <div className='status-container' >
