@@ -70,12 +70,12 @@ export default function Audit() {
     const handelRescan = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         setIsLoading(true)
-        await handleRequest()
+        await handleRequest(true)
     }
 
-    const handleRequest = async () => {
+    const handleRequest = async (newTest: boolean) => {
         const report = location.state.report
-        if (report) {
+        if (!newTest) {
             setReport(prevState => ({
                 ...prevState,
                 violationsNumber: report.audit.failedSize,
@@ -100,7 +100,8 @@ export default function Audit() {
                 data: {
                     url: location.state.url,
                     standard: location.state.standard,
-                    userID: authState.user?.userID !== null ? authState.user?.userID : ''
+                    userID: authState.user?.userID !== null ? authState.user?.userID : '',
+                    reportID: location.state.reportID !== null ? location.state.reportID : ''
                 },
                 withCredentials: true
 
@@ -127,16 +128,20 @@ export default function Audit() {
                 setError(err.response.data.message || err)
             })
         }
-
     }
-
 
     useEffect(() => {
         if (location.state === null) {
             navigate('/')
         }
         else {
-            handleRequest();
+            const report = location.state.report
+            if (report) {
+                handleRequest(false);
+            }
+            else {
+                handleRequest(true);
+            }
         }
 
     }, [])
@@ -164,7 +169,6 @@ export default function Audit() {
                         </div>
                     </div>
                     :
-
                     <>
                         <div className='tools-container'>
                             <div className='tools-wrapper'>
@@ -192,7 +196,6 @@ export default function Audit() {
                                 <ReultsDetails violationsReport={report.violations} failedNumber={report.violationsNumber} />
                             </div>
                         </div>
-
                     </>
 
             }

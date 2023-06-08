@@ -1,8 +1,6 @@
 import { useState } from "react"
 import { FaLowVision, FaChevronDown, FaAngleRight, FaAngleLeft } from 'react-icons/fa'
 import { AnimatePresence, motion } from 'framer-motion';
-import 'swiper/css';
-import 'swiper/css/pagination';
 
 interface ViolationsType {
     title: string;
@@ -69,7 +67,38 @@ const ReultsDetails = ({ violationsReport, failedNumber }: ResultsDetailsProps) 
                                                 </div>
                                             </div>
                                             {violation.issues.map((issue, index) => {
-                                                return <><span key={index}>{issue.target}</span> <br /></>
+                                                return <div style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column'
+                                                }} key={index}>
+                                                    <span >{issue.target}</span>
+                                                    {
+                                                        issue.toBeFixed.length !== 0 &&
+                                                        <>
+                                                            <b>Try to check this solutions:</b><div>
+                                                                {issue.toBeFixed.map((tobefixed, index) => {
+                                                                    return (
+                                                                        <div key={index}>
+                                                                            <ul>
+                                                                                <li>{tobefixed.message}</li>
+                                                                            </ul>
+                                                                            <>{tobefixed.relatedNodes.length !== 0 &&
+                                                                                <>
+                                                                                    <h5>Realated nodes</h5>
+                                                                                    <ul>
+                                                                                        {tobefixed.relatedNodes.map((node, index) => {
+                                                                                            return <li key={index}>{node.target}</li>;
+                                                                                        })}
+                                                                                    </ul>
+                                                                                </>}</>
+
+                                                                        </div>);
+                                                                })}
+                                                            </div>
+                                                        </>
+                                                    }
+                                                    <br />
+                                                </div>
                                             })}
 
                                         </div>
