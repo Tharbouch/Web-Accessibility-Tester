@@ -17,7 +17,6 @@ module.exports.getPage = async (url) => {
         return [browser,page, image];
     }
     catch (error) {
-        console.log(error)
         throw new Error(error)
     }
 }
