@@ -76,7 +76,7 @@ module.exports.checkAccessibility = async (page, url, standard) => {
             impact: violation.impact,
             title: violation.help,
             id: violation.id,
-            disabilitiesAffected,
+            disabilitiesAffected: disabilitiesAffected,
             description: violation.description,
             issues: issues.filter((item) => item !== null)
         };
