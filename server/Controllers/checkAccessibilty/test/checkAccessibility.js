@@ -6,8 +6,7 @@ const accessibilityEmitter = new EventEmitter();
 const testCounts = new Map();
 
 async function accessibilityCheck(req, res, next) {
-    const { url, standard, userID } = req.body;
-    console.log(userID)
+    const { url, standard, userID, reportID } = req.body;
 
     try {
         if (!req.cookies.user) {//Verify user authentication status.
@@ -42,7 +41,7 @@ async function accessibilityCheck(req, res, next) {
             const response = await runTest(url, standard, next);
 
             // Save the data to the database
-            await saveDataToDatabase(url, userID, response);
+            await saveDataToDatabase(url, standard, userID, response, reportID);
             console.log('done')
 
             res.json(response);
@@ -97,17 +96,26 @@ async function runTest(url, standard) {
         score,
         image
     };
-
 }
 
-async function saveDataToDatabase(url, userID, data) {
+async function saveDataToDatabase(url, standard, userID, data, reportID) {
     const date = new Date().toISOString().split('T')[0]
     // Save the data to the database
-    Audit.create({ owner: userID, website: url, lastScan: date, audit: data })
-        .then((response) => {
-            console.log("report been save for the user " + userID + " for the website " + url)
-        })
-        .catch((err) => { console.log(err) })
+    if (reportID) {
+        Audit.findByIdAndUpdate(reportID, data)
+            .then((response) => {
+                console.log("report been updated for the user " + userID + " for the website " + url)
+            })
+            .catch((err) => { console.log(err) })
+    }
+    else {
+        Audit.create({ owner: userID, website: url, lastScan: date, standard: standard, audit: data })
+            .then((response) => {
+                console.log("report been save for the user " + userID + " for the website " + url)
+            })
+            .catch((err) => { console.log(err) })
+    }
+
 }
 
 // Event listener to close the event after response is sent
