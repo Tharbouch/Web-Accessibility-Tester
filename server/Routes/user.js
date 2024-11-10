@@ -6,6 +6,6 @@ route.post('/login', controller.logUser)
 route.post('/register', controller.registerUser)
 route.get('/loggedIn', controller.checkLogIn)
 route.post('/logout', controller.logout)
-route.post('/password-recovery', controller.passwordRecovery)
+// route.post('/password-recovery', controller.passwordRecovery) will be fixed later
 
 module.exports = route
