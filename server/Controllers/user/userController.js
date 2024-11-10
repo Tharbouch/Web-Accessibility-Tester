@@ -147,36 +147,36 @@ const logout = (req, res) => {
 };
 
 
-const passwordRecovery = (req, res) => {
-    const { email } = req.body;
+// const passwordRecovery = (req, res) => {
+//     const { email } = req.body;
 
-    // Generate a password reset token (you can use a library like crypto-random-string)
-    const token = createSecretToken(email, '', '', '', true);
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'tahaharbouch01@gmail.com',
-            pass: 'web@ccessibility2000'
-        }
-    });
-    const mailOptions = {
-        from: 'tahaharbouch01@gmail.com',
-        to: email,
-        subject: 'Password Reset',
-        text: `Click the following link to reset your password: https://localhost/password-reset/${token}`
-    };
+//     // Generate a password reset token (you can use a library like crypto-random-string)
+//     const token = createSecretToken(email, '', '', '', true);
+//     const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//             user: 'tahaharbouch01@gmail.com',
+//             pass: 'web@ccessibility2000'
+//         }
+//     });
+//     const mailOptions = {
+//         from: 'tahaharbouch01@gmail.com',
+//         to: email,
+//         subject: 'Password Reset',
+//         text: `Click the following link to reset your password: https://localhost/password-reset/${token}`
+//     };
 
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-            res.status(500).json({ error: 'Failed to send password reset email' });
-        } else {
-            console.log('Email sent:', info.response);
-            res.status(200).json({ message: 'Password reset email sent successfully' });
-        }
-    });
-}
+//     // Send the email
+//     transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//             console.error('Error sending email:', error);
+//             res.status(500).json({ error: 'Failed to send password reset email' });
+//         } else {
+//             console.log('Email sent:', info.response);
+//             res.status(200).json({ message: 'Password reset email sent successfully' });
+//         }
+//     });
+// }
 
 const passwordReset = (req, res) => {
     jwt.verify(req.body.token, process.env.TOKEN_SECRET, (err, decoded) => {
