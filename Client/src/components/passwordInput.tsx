@@ -1,7 +1,13 @@
 import { ChangeEvent, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const PasswordInput = ({ value, handler, error }: any) => {
+interface PasswordInputProps {
+    value: string;
+    handler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    error?: string;
+}
+
+const PasswordInput = ({ value, handler, error }: PasswordInputProps) => {
 
     const [checked, setChecked] = useState<boolean>(false)
     return (

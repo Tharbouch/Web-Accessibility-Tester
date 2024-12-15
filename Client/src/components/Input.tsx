@@ -1,6 +1,15 @@
 import { ChangeEvent } from "react";
 
-const Input = ({ type, label, value, name, handler, error }: any) => (
+interface InputProps {
+    type: string;
+    label: string;
+    name: string;
+    value: string;
+    handler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    error?: string;
+}
+
+const Input = ({ type, label, value, name, handler, error }: InputProps) => (
 
     <div className="input">
         <div className='input-field'>

@@ -1,5 +1,4 @@
-
-export const Guidlines = () => {
+const Guidlines = () => {
     return (
         <section className="guidlines-section">
             <div className="content-container">
@@ -87,3 +86,5 @@ export const Guidlines = () => {
 
     )
 }
+
+export default Guidlines;
