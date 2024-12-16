@@ -10,8 +10,26 @@ import Audit from './pages/audit'
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import fetchCsrfToken from './utils/fetchCRSF'
+import { connect, ConnectedProps } from 'react-redux';
+import { checkLoggedIn } from './redux/slices/authSlice';
+import { stateType } from './redux/store'
+import { SyncLoader } from 'react-spinners';
 import './App.css'
-function App() {
+import ProtectRoute from './utils/protectRoute'
+
+
+const mapStateToProps = (state: stateType) => ({
+  loading: state.auth.loading,
+});
+
+const mapDispatch = {
+  checkLoggedIn,
+};
+
+const connector = connect(mapStateToProps, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function App({ loading, checkLoggedIn  }:PropsFromRedux) {
   
   useEffect(() => {
     if (document.cookie === "") {
@@ -20,6 +38,18 @@ function App() {
 
   }, []);
 
+  useEffect(() => {
+    checkLoggedIn();
+  }, [checkLoggedIn]);
+
+  if (loading) {
+    return (
+      <div className="loading-wrapper">
+        <h3>LOADING</h3>
+        <SyncLoader color="#134e9d" />
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -28,7 +58,9 @@ function App() {
         <Route path='account-access' element={<Login />} />
         {/* <Route path='password-recovery' element={<ForgetPassword />} /> */}
         {/* <Route path="password-reset/:token" element={<NewPassword />} /> */}
-        <Route path='dashboard' element={<Dashboard />} />
+        <Route element-={<ProtectRoute/>}>
+          <Route path='dashboard' element={<Dashboard />} />
+        </Route>
         <Route path='audit' element={<Audit />} />
         <Route path='guides' element={<Guidlines />} />
         <Route path='*' element={<NotFoud />} />
@@ -37,4 +69,7 @@ function App() {
   )
 }
 
-export default App
+
+
+export default connector(App);
+

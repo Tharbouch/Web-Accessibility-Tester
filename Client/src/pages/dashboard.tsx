@@ -1,167 +1,161 @@
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SyncLoader } from "react-spinners";
-import { AuthContext, AuthContextType } from "../context/authContext";
+import { connect, ConnectedProps } from "react-redux";
 import { FaEye } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../utils/axiosInstance";
+import { selectAuthState } from "../redux/slices/authSlice";
+import { selectReports, setReports, selectReport } from "../redux/slices/reportSlice";
+import { stateType } from "../redux/store";
 
 interface ReportType {
-    _id: string,
-    owner: string,
-    website: string,
-    lastScan: string,
-    standard: string,
-    audit: Report
-}
-
-interface Report {
+  _id: string;
+  owner: string;
+  website: string;
+  lastScan: string;
+  standard: string;
+  audit: {
     failedSize: number;
     passedSize: number;
-    failed: {
-        title: string;
-        impact: string;
-        description: string;
-        issues: {
-            target: string;
-            toBeFixed: {
-                message: string;
-                relatedNodes: {
-                    target: string;
-                }[];
-            }[];
-        }[];
-    }[];
+    failed: any[];
     passed: any[];
     score: number;
     image: string;
+  };
 }
 
-export default function Dashboard() {
-    const navigate = useNavigate();
-    const [url, setUrl] = useState<string>('')
-    const [loading, setLoading] = useState(true)
-    const [standard, setStandard] = useState<string>('WCAG')
-    const [reports, setReports] = useState<ReportType[]>([])
+const mapStateToProps = (state: stateType) => ({
+  auth: selectAuthState(state),
+  reports: selectReports(state),
+});
 
-    const authContext = useContext<AuthContextType | null>(AuthContext)
-    const { authState } = authContext as AuthContextType;
+const mapDispatch = {
+  setReports,
+  selectReport,
+};
 
-    const handelOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault()
-        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url, standard, userID: authState.user?.userID } });
+const connector = connect(mapStateToProps, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function Dashboard({ auth, reports, setReports, selectReport }: PropsFromRedux) {
+  const navigate = useNavigate();
+  const [url, setUrl] = useState<string>("");
+  const [standard, setStandard] = useState<string>("WCAG");
+
+  const { data, isLoading, error } = useQuery(
+    ["userReports", auth.user?.userID],
+    async () => {
+      const response = await axiosInstance.get<ReportType[]>("/getReport", {
+        params: { userID: auth.user?.userID },
+      });
+      return response.data;
+    },
+    {
+      onSuccess: (data: any) => {
+        setReports(data); // Update Redux state with the fetched reports
+      },
+      enabled: !!auth.user?.userID, // Ensure the query runs only if userID exists
     }
-    const handleRowClick = (index: number) => {
-        navigate(`/audit?url=${encodeURIComponent(reports[index].website)}`, { state: { url: reports[index].website, standard: reports[index].standard, userID: authState.user?.userID, report: reports[index], reportID: reports[index]._id } });
+  );
 
-    }
+  const handleCheckWebsite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate(`/audit`, { state: { url, standard } });
+  };
 
-    const handelRescan = (index: number) => {
-        navigate(`/audit?url=${encodeURIComponent(url)}`, { state: { url: reports[index].website, standard: reports[index].standard, userID: authState.user?.userID, reportID: reports[index]._id } });
-    }
+  const handleRowClick = (report: ReportType) => {
+    selectReport(report); // Update the selected report in Redux
+    navigate(`/audit`);
+  };
 
-    useEffect(() => {
-        axios({
-            url: 'http://localhost:4000/api/v1/getReport',
-            method: 'get',
-            params: {
-                userID: authState.user?.userID
-            }
-        })
-            .then((response) => {
-                setReports(response.data)
-                setLoading(false)
-            })
-            .catch((err) => {
-                alert(err)
-            })
-    }, [authState])
+  const handleRescan = (report: ReportType) => {
+    selectReport(report); // Update the selected report in Redux
+    navigate(`/audit`);
+  };
 
+  if (isLoading) {
     return (
-        <section className='dashboard-section'>
+      <section className="dashboard-section">
+        <div className="loading-container">
+          <div className="image-wrapper">
+            <img src="/images/testing.png" alt="loading illustration" />
+          </div>
+          <div className="description-wrapper">
+            <h3>Loading</h3>
+            <SyncLoader color="#134e9d" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-            {
+  if (error) {
+    return (
+      <section className="dashboard-section">
+        <div className="error-container">
+          <h3>Failed to load reports</h3>
+          <p>{error instanceof Error ? error.message : "Unknown error"}</p>
+        </div>
+      </section>
+    );
+  }
 
-                loading
-                    ?
-                    <><div className='loading-container'>
-
-                        <div className='image-wrapper'>
-                            <img src="/images/testing.png" alt="loading illustration" />
-                        </div>
-                        <div className='description-wrapper'>
-                            <h3>loading</h3>
-                            <SyncLoader color="#134e9d" />
-                        </div>
-                    </div></>
-                    :
-                    <>
-                        <div className="search-wrap">
-                            <div className="search_box">
-                                <div className="params">
-                                    <input type="text" name='url' autoFocus={false} autoComplete='off' className="input" placeholder="Type Website's URL" onChange={(e) => { setUrl(e.target.value); }} />
-                                    <select name="standard" onChange={(e) => { setStandard(e.target.value); }}>
-                                        <option value="WCAG">WCAG</option>
-                                        <option value="Section 508">Secton 508</option>
-                                    </select>
-                                </div>
-                                <button className="btn" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => { handelOnClick(e); }}>Check Website</button>
-                            </div>
-                        </div><div className='table-wrapper'>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            Website
-                                        </th>
-                                        <th>
-                                            Last scan
-                                        </th>
-                                        <th>
-                                            Violations
-                                        </th>
-                                        <th>
-                                            Passed
-                                        </th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <>
-                                        {
-                                            reports.map((report, index) => {
-                                                return (
-                                                    <tr key={index} >
-                                                        <td >{report.website}</td>
-                                                        <td>{report.lastScan.split('T')[0]}</td>
-                                                        <td>
-                                                            <div className='status-container'>
-                                                                <p className='violations'>{report.audit.failedSize}</p>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='status-container'>
-                                                                <p className='passed'>{report.audit.passedSize}</p>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='rescan-btn-wrap'>
-                                                                <button onClick={(e) => { handelRescan(index) }} className='rescan-btn'>Rescan</button>
-                                                            </div>
-                                                        </td>
-                                                        <td className="view-report">
-                                                            <FaEye onClick={() => { handleRowClick(index) }}/>
-                                                        </td>
-
-                                                    </tr>)
-                                            })
-                                        }
-                                    </>
-                                </tbody>
-                            </table>
-                        </div>
-                    </>
-            }
-
-        </section>
-    )
+  return (
+    <section className="dashboard-section">
+      <div className="search-wrap">
+        <div className="search_box">
+          <div className="params">
+            <input
+              type="text"
+              className="input"
+              placeholder="Type Website's URL"
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <select name="standard" onChange={(e) => setStandard(e.target.value)}>
+              <option value="WCAG">WCAG</option>
+              <option value="Section 508">Section 508</option>
+            </select>
+          </div>
+          <button className="btn" onClick={handleCheckWebsite}>
+            Check Website
+          </button>
+        </div>
+      </div>
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Website</th>
+              <th>Last Scan</th>
+              <th>Violations</th>
+              <th>Passed</th>
+              <th>Rescan</th>
+              <th>View Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reports.allReports.map((report: ReportType, index: number) => (
+              <tr key={index}>
+                <td>{report.website}</td>
+                <td>{report.lastScan.split("T")[0]}</td>
+                <td>{report.audit.failedSize}</td>
+                <td>{report.audit.passedSize}</td>
+                <td>
+                  <button className="rescan-btn" onClick={() => handleRescan(report)}>
+                    Rescan
+                  </button>
+                </td>
+                <td className="view-report">
+                  <FaEye onClick={() => handleRowClick(report)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
 }
+
+export default connector(Dashboard);

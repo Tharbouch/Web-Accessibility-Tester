@@ -2,16 +2,16 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
-import { AuthProvider } from './context/authContext'
-
+import { Provider } from 'react-redux';
+import store from './redux/store';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 
-  <AuthProvider>
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </AuthProvider>
+  </Provider>
 
 )
 

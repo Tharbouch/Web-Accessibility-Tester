@@ -39,7 +39,6 @@ const SignupForm = ({ onSignup, globalError, clearGlobalError, accountCreated }:
             try {
                 await onSignup(formData.fullname, formData.username, formData.email, formData.password);
             } catch (error: any) {
-                // If the backend returns a user exists error, handle it here
                 if (error.response?.data?.message.includes("user already exists")) {
                     setErrors((prev) => ({ ...prev, userExists: true }));
                 }
