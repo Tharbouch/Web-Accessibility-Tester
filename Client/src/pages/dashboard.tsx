@@ -86,7 +86,7 @@ export default function Dashboard() {
                     <><div className='loading-container'>
 
                         <div className='image-wrapper'>
-                            <img src="/images/testing.jpg" alt="loading illustration" />
+                            <img src="/images/testing.png" alt="loading illustration" />
                         </div>
                         <div className='description-wrapper'>
                             <h3>loading</h3>

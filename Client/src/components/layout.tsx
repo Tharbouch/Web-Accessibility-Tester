@@ -3,138 +3,128 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { TiZoomOutline } from 'react-icons/ti';
 import { FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
-import axios from 'axios';
 import { AuthContext, AuthContextType } from '../context/authContext';
-
+import axiosInstance from "../utils/axiosInstance";
 const Layout = () => {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const authContext = useContext<AuthContextType | null>(AuthContext)
+    const authContext = useContext<AuthContextType | null>(AuthContext);
     const { authState, authDispatch } = authContext as AuthContextType;
 
-    const showNavbar = () => {
-        setIsNavbarOpen(!isNavbarOpen);
-    };
 
     const handleLogOut = async () => {
-        await axios({
-            url: "http://localhost:4000/api/v1/user/logout",
-            method: 'post',
-            withCredentials: true
+        await axiosInstance({
+            url: "/user/logout",
+            method:"POST"
         });
         authDispatch({ type: 'LOGOUT' });
-        navigate('/')
-    }
+        navigate('/');
+    };
 
     return (
         <>
-            <header>
+            <header className="flex justify-between items-center relative px-10 py-5 z-20 shadow-[0_10px_8px_1px_rgba(174,206,228,0.29)]">
                 <Link aria-label="home page" to="/">
-                    <div className="logo">
-                        <TiZoomOutline />
-                        <h1>Accessibility Checker</h1>
+                    <div className="flex items-center">
+                        <TiZoomOutline className='text-[40px]' />
+                        <h1 className="font-bold text-2xl leading-5 ml-2">Accessibility Checker</h1>
                     </div>
                 </Link>
-                <nav className={`nav ${isNavbarOpen ? 'responsive_nav' : ''}`}>
-                    <Link to="guides" onClick={showNavbar} aria-label="web accessibility guides page">
+                
+                <nav className={`${isNavbarOpen ? 'fixed top-0 left-0 h-full w-full flex flex-col items-center justify-center gap-6 bg-white transform translate-y-0 transition-transform duration-1000' : 'hidden lg:flex items-center gap-8'}`}>
+                    <Link 
+                        to="guides" 
+                        onClick={ () => setIsNavbarOpen(false)}
+                        className="font-normal text-lg leading-5" 
+                        aria-label="web accessibility guides page"
+                    >
                         Accessibility Guides
                     </Link>
-                    <Link to="aboutus" onClick={showNavbar} aria-label="about us page">
-                        About us
+                    <Link 
+                        to="aboutus" 
+                        onClick={ () => setIsNavbarOpen(false)}
+                        className="font-normal text-lg leading-5" 
+                        aria-label="about us page"
+                    >
+                        About Us
                     </Link>
                     {
-                        authState.loggedIn ?
+                        authState.loggedIn ? (
                             <>
-                                <Link to="dashboard" onClick={showNavbar} aria-label="Dashboard page">
+                                <Link 
+                                    to="dashboard" 
+                                       onClick={ () => setIsNavbarOpen(false)} 
+                                    className="font-normal text-lg leading-5" 
+                                    aria-label="Dashboard page"
+                                >
                                     Dashboard
                                 </Link>
-                                <span>Hello, {authState.user?.username}</span>
-                                <FiLogOut onClick={handleLogOut} />
+                                <span className="font-medium text-lg leading-5">Hello, {authState.user?.username}</span>
+                                <FiLogOut className="text-3xl cursor-pointer" onClick={handleLogOut} />
                             </>
-                            :
-                            <Link to="account-access" onClick={showNavbar} aria-label="login and sign up page">
-                                <FaUserCircle />
+                        ) : (
+                            <Link 
+                                to="/account-access" 
+                                onClick={ () => setIsNavbarOpen(false)}
+                                className="font-normal text-lg leading-5" 
+                                aria-label="login and sign up page"
+                            >
+                                <FaUserCircle className="text-3xl" />
                             </Link>
+                        )
                     }
-                    <button className="nav-btn nav-close-btn" onClick={showNavbar}>
+                    <button className={isNavbarOpen ? 'absolute top-8 right-8 p-[5px] cursor-pointer bg-transparent border-none outline-none text-current text-[1.8rem]' : 'hidden'}    onClick={ () => setIsNavbarOpen(false)}>
                         <FaTimes />
                     </button>
                 </nav>
-                <button className="nav-btn" onClick={showNavbar}>
+                
+                <button className="block lg:hidden p-[5px] cursor-pointer bg-transparent border-none outline-none text-current opacity-100 text-[1.8rem]"    onClick={ () => setIsNavbarOpen(true)}>
                     <FaBars />
                 </button>
             </header>
-            <main>
+            
+            <main className='bg-gray-50'>
                 <Outlet />
             </main>
-            <footer>
-                <ul className="footer-nav">
-                    <li >
-                        <div className="h3">Knowledge base</div>
-                        <ul className='sublist'>
-                            <li >
-                                <a href="#">Audit your website</a>
-                            </li>
-                            <li >
-                                <a href="#">About Us</a>
-                            </li>
-                            <li>
-                                <a href="#">How it works</a>
-                            </li>
-                            <li >
-                                <a href="#">Blog</a>
-                            </li>
-                            <li >
-                                <a href="#">Contact Us</a>
-                            </li>
-                            <li style={{ display: "none" }}>
+            
+            <footer className="flex w-full p-10 justify-center bg-sky-950 text-white">
+                <ul className="flex w-[75%] items-center justify-between">
+                    <li>
+                        <div className="text-xl font-semibold">Knowledge Base</div>
+                        <ul className='mt-2 space-y-1'>
+                            <li><a href="#" className="text-base">Audit your website</a></li>
+                            <li><a href="#" className="text-base">About Us</a></li>
+                            <li><a href="#" className="text-base">How it works</a></li>
+                            <li><a href="#" className="text-base">Blog</a></li>
+                            <li><a href="#" className="text-base">Contact Us</a></li>
+                            <li className="hidden">
                                 <label className="modal-button" htmlFor="modal">
-                                    <a>Contact Us</a>
+                                    <a className="text-base">Contact Us</a>
                                 </label>
                             </li>
                         </ul>
                     </li>
-                    <li >
-                        <div className="h3">Legislations</div>
-                        <ul className='sublist'>
-                            <li>
-                                <a href="#">WCAG</a>
-                            </li>
-                            <li>
-                                <a href="#">ADA</a>
-                            </li>
-                            <li>
-                                <a href="#" aria-current="page">
-                                    Section 508
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">EAA/EN301549</a>
-                            </li>
-                            <li>
-                                <a href="#">AODA</a>
-                            </li>
+                    <li>
+                        <div className="text-xl font-semibold">Legislations</div>
+                        <ul className='mt-2 space-y-1'>
+                            <li><a href="#" className="text-base">WCAG</a></li>
+                            <li><a href="#" className="text-base">ADA</a></li>
+                            <li><a href="#" className="text-base" aria-current="page">Section 508</a></li>
+                            <li><a href="#" className="text-base">EAA/EN301549</a></li>
+                            <li><a href="#" className="text-base">AODA</a></li>
                         </ul>
                     </li>
                     <li>
-                        <div className="h3">Legal</div>
-                        <ul className='sublist'>
+                        <div className="text-xl font-semibold">Legal</div>
+                        <ul className='mt-2 space-y-1'>
+                            <li><a href="#" className="text-base">Terms of Use</a></li>
+                            <li><a href="#" className="text-base">Privacy Policy</a></li>
+                            <li><a href="#" className="text-base">Cookie Policy</a></li>
+                            <li><a href="#" className="text-base">Advertiser Disclosure</a></li>
                             <li>
-                                <a href="#">Terms of Use</a>
-                            </li>
-                            <li>
-                                <a href="#">Privacy Policy</a>
-                            </li>
-                            <li>
-                                <a href="#">Cookie Policy</a>
-                            </li>
-                            <li>
-                                <a href="#">Advertiser Disclosure</a>
-                            </li>
-                            <li>
-                                <label >
-                                    <a>Data Protection</a>
+                                <label>
+                                    <a className="text-base">Data Protection</a>
                                 </label>
                             </li>
                         </ul>

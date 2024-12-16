@@ -11,7 +11,6 @@ import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import fetchCsrfToken from './utils/fetchCRSF'
 import './App.css'
-
 function App() {
   
   useEffect(() => {
@@ -35,7 +34,6 @@ function App() {
         <Route path='*' element={<NotFoud />} />
       </Route>
     </Routes>
-
   )
 }
 

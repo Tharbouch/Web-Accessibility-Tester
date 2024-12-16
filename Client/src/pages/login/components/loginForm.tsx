@@ -32,21 +32,19 @@ export default function LoginForm({ onLogin, globalError, clearGlobalError }: Lo
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {globalError && <p className="error">{globalError}</p>}
-            <div className="inputs">
+        <form className="flex flex-col gap-2 w-full" noValidate onSubmit={handleSubmit}>
+            {globalError && <p className="font-bold text-red-600 text-base mb-1 ">{globalError}</p>}
+            <div className="flex flex-col items-center space-y-2">
                 <Input type="text" label="Username" name="username" value={formData.username} handler={handleChange} error={errors.username} />
                 <PasswordInput value={formData.password} handler={handleChange} error={errors.password} />
             </div>
-            <div className="help-row">
-                <div>
-                    <input type="checkbox" checked={formData.persist} onChange={handleChange} name="persist" id="rememberme-button" />
-                    <label htmlFor="rememberme-button">Remember me</label>
-                </div>
-                {/* Link to password recovery later */}
+            <div className="flex w-full justify-start mb-2 items-center space-x-2">
+                <input type="checkbox" checked={formData.persist} onChange={handleChange} name="persist" id="rememberme-button" />
+                <label htmlFor="rememberme-button">Remember me</label>
+                {/* Link to rest password later */}
             </div>
-            <div className="button">
-                <button className="submitButton" type="submit">Log in</button>
+            <div className="flex w-full my-2">
+                <button className="rounded-2xl bg-sky-600 text-white text-center w-full py-3 px-9" type="submit">Log in</button>
             </div>
         </form>
     );

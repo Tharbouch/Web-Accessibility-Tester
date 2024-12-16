@@ -48,18 +48,26 @@ const SignupForm = ({ onSignup, globalError, clearGlobalError, accountCreated }:
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {globalError && <p className="error">{globalError}</p>}
-            {accountCreated && <div className="success-msg"><p>Your account has been created successfully</p></div>}
-            {errors.userExists && <p className="error">*User already exists, use a unique email and username</p>}
-            <div className="inputs">
+        <form className="flex flex-col w-full" noValidate onSubmit={handleSubmit}>
+            {globalError && <p className="font-bold text-red-600 text-base mb-1">{globalError}</p>}
+            {accountCreated && (
+                <div className="text-green-600 font-semibold mb-2">
+                    Your account has been created successfully
+                </div>
+            )}
+            {errors.userExists && (
+                <p className="text-red-600 font-bold mb-2">
+                    *User already exists, use a unique email and username
+                </p>
+            )}
+            <div className="flex flex-col justify-start mb-2 space-y-2">
                 <Input type="text" label="Full Name" name="fullname" value={formData.fullname} handler={handleChange} error={errors.fullname} />
                 <Input type="text" label="Username" name="username" value={formData.username} handler={handleChange} error={errors.username} />
                 <Input type="email" label="Email" name="email" value={formData.email} handler={handleChange} error={errors.email} />
                 <PasswordInput value={formData.password} handler={handleChange} error={errors.password} />
             </div>
-            <div className="button">
-                <button className="submitButton" type="submit">Sign up</button>
+            <div className="flex w-full my-2">
+                <button className="rounded-2xl bg-sky-600 text-white text-center w-full py-3 px-9" type="submit">Sign up</button>
             </div>
         </form>
     );
