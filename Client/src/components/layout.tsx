@@ -3,22 +3,34 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { TiZoomOutline } from 'react-icons/ti';
 import { FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
-import { AuthContext, AuthContextType } from '../context/authContext';
 import axiosInstance from "../utils/axiosInstance";
-const Layout = () => {
+import { connect,ConnectedProps } from 'react-redux';
+import { stateType } from '../redux/store';
+import { logout } from '../redux/slices/authSlice';
+
+const mapStateToProps = (state: stateType) => ({
+  loggedIn: state.auth.loggedIn,
+  username: state.auth.user?.username
+});
+
+const mapDispatch = {
+    logout,
+  };
+  
+
+const connector = connect(mapStateToProps, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const Layout = ({ loggedIn ,username,logout}:PropsFromRedux) => {
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
     const navigate = useNavigate();
-
-    const authContext = useContext<AuthContextType | null>(AuthContext);
-    const { authState, authDispatch } = authContext as AuthContextType;
-
 
     const handleLogOut = async () => {
         await axiosInstance({
             url: "/user/logout",
             method:"POST"
         });
-        authDispatch({ type: 'LOGOUT' });
+        logout();
         navigate('/');
     };
 
@@ -50,7 +62,7 @@ const Layout = () => {
                         About Us
                     </Link>
                     {
-                        authState.loggedIn ? (
+                        loggedIn ? (
                             <>
                                 <Link 
                                     to="dashboard" 
@@ -60,7 +72,7 @@ const Layout = () => {
                                 >
                                     Dashboard
                                 </Link>
-                                <span className="font-medium text-lg leading-5">Hello, {authState.user?.username}</span>
+                                <span className="font-medium text-lg leading-5">Hello, {username}</span>
                                 <FiLogOut className="text-3xl cursor-pointer" onClick={handleLogOut} />
                             </>
                         ) : (
@@ -135,4 +147,4 @@ const Layout = () => {
     );
 };
 
-export default Layout;
+export default connector(Layout);

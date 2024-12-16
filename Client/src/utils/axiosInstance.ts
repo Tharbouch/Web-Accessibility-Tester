@@ -18,7 +18,10 @@ axiosInstance.interceptors.request.use(
         }
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+        console.error(error.response?.data?.message || error.message);
+        return Promise.reject(error);
+    }
 );
 
 // Response Interceptor

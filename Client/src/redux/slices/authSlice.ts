@@ -24,13 +24,30 @@ export const checkLoggedIn = createAsyncThunk(
   'auth/checkLoggedIn',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance({url:"/user/loggedIn",method:"GET"})
+      const response = await axiosInstance({url:'/user/loggedIn',method:'GET'})
       if (response.status === 200) {
-        return response.data.info; // Return user data
+        return response.data.info;
       } else {
         throw new Error('User not logged in');
       }
-    } catch (error: any) {
+    } catch (error:any) {
+      // If error indicates token expired, try refresh
+      if (error.response?.status === 401 && error.response?.data?.error === 'Access token expired') {
+        try {
+          // Attempt to refresh
+          await axiosInstance({url:'/user/refresh',method:'GET'});
+          // After successful refresh, try checkLoggedIn again
+          const retryResponse = await axiosInstance({url:'/user/loggedIn',method:'GET'});
+          if (retryResponse.status === 200) {
+            return retryResponse.data.info;
+          } else {
+            return rejectWithValue('User not logged in');
+          }
+        } catch (refreshError) {
+          return rejectWithValue('Refresh token invalid, please log in again');
+        }
+      }
+
       return rejectWithValue(error.response?.data || 'Error checking login status');
     }
   }

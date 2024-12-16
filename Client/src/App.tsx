@@ -14,8 +14,9 @@ import { connect, ConnectedProps } from 'react-redux';
 import { checkLoggedIn } from './redux/slices/authSlice';
 import { stateType } from './redux/store'
 import { SyncLoader } from 'react-spinners';
-import './App.css'
 import ProtectRoute from './utils/protectRoute'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import './App.css'
 
 
 const mapStateToProps = (state: stateType) => ({
@@ -30,6 +31,8 @@ const connector = connect(mapStateToProps, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function App({ loading, checkLoggedIn  }:PropsFromRedux) {
+  const queryClient = new QueryClient();
+
   
   useEffect(() => {
     if (document.cookie === "") {
@@ -52,6 +55,7 @@ function App({ loading, checkLoggedIn  }:PropsFromRedux) {
   }
 
   return (
+    <QueryClientProvider client={queryClient}>
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route index element={<Landing />} />
@@ -66,6 +70,7 @@ function App({ loading, checkLoggedIn  }:PropsFromRedux) {
         <Route path='*' element={<NotFoud />} />
       </Route>
     </Routes>
+    </QueryClientProvider>
   )
 }
 
