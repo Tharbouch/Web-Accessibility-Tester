@@ -1,10 +1,8 @@
-const { AxePuppeteer } = require('@axe-core/puppeteer');
-const { mkdir, writeFileSync } = require('fs');
+const axe = require('axe-core');
 const types = require('../issuesTypes/types');
-const { join } = require('path');
 
 async function getDisabilitiesAffected(id) {
-    //check which Disabilities Affected by the issue
+    // Check which Disabilities are Affected by the issue
     const DisabilitiesAffected = []
     for (const key in types) {
         if (types.hasOwnProperty(key)) {
@@ -17,50 +15,30 @@ async function getDisabilitiesAffected(id) {
     return DisabilitiesAffected
 }
 
-
 module.exports.checkAccessibility = async (page, url, standard) => {
-
-    // set up check configuration
+    // Set up check configuration
     const accessibilityOptions = {
-        xpath: true,
-        absolutePaths: true,
-        reporter: 'v2',
         runOnly: standard === "WCAG" ? ['cat.*', 'wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'best-practice'] : ['cat.*', 'section508', 'section508.*.*']
     };
 
-    // lunch the check
-    const accessibilityResults = await new AxePuppeteer(page)
-        .options(accessibilityOptions)
-        .analyze();
+    // Inject axe-core into the page
+    await page.addScriptTag({ path: require.resolve('axe-core') });
 
-    // create new directory to store cpatured elements 
-    // const now = new Date().toISOString().replace(/T/, '-').replace(/\..+/, '').replace(/:/g, '-');
-    // const path = join('uploads', new URL(url).hostname + ' - ' + now);
-    // mkdir(path, { recursive: true }, (err) => {
-    //     if (err) {
-    //         return console.error(err);
-    //     }
-    //     console.log('Directory created successfully!');
-    // });
+    // Launch the check
+    const accessibilityResults = await page.evaluate(async (options) => {
+        return await axe.run(options);
+    }, accessibilityOptions);
 
     const failed = await Promise.all(accessibilityResults.violations.map(async (violation) => {
-
-        const disabilitiesAffected = await getDisabilitiesAffected(violation.id)
-        const issues = await Promise.all(violation.nodes.map(async (node, index) => {
-            if (!page.isClosed()) {
-
-                const target = node.target
-                //await elementPositioning(target, page, path, index)
-
+        const disabilitiesAffected = await getDisabilitiesAffected(violation.id);
+        const issues = await Promise.all(violation.nodes.map(async (node) => {
+            if (node.target) {
                 return {
                     target: node.html,
                     toBeFixed: await Promise.all(node.any.map(async (related) => {
-
                         return {
                             message: related.message,
-                            relatedNodes: related.relatedNodes.length > 0 ? await Promise.all(related.relatedNodes.map(async (relatedNodes, index) => {
-                                //await elementPositioning(relatedNodes.target, page, path, index)
-
+                            relatedNodes: related.relatedNodes.length > 0 ? await Promise.all(related.relatedNodes.map(async (relatedNodes) => {
                                 return {
                                     target: relatedNodes.html,
                                 };
@@ -90,12 +68,12 @@ module.exports.checkAccessibility = async (page, url, standard) => {
         }
     }));
 
-    const score = await calculateAccessibilityScore(failed)
+    const score = await calculateAccessibilityScore(failed);
+    const failedSize = failed.length;
+    const passedSize = passed.length;
 
-    const failedSize = failed.length
-    const passedSize = passed.length
     return [failed, passed, failedSize, passedSize, score];
-}
+};
 
 const weights = {
     critical: 0.35,
@@ -105,11 +83,11 @@ const weights = {
 };
 
 const calculateAccessibilityScore = async (failed) => {
-
-    const totalViolation = failed.length
+    const totalViolation = failed.length;
     if (totalViolation === 0) {
-        return 100
+        return 100;
     }
+
     const criteriaScores = {
         critical: 0,
         serious: 0,
@@ -129,53 +107,3 @@ const calculateAccessibilityScore = async (failed) => {
     const accessibilityScore = (1 - weightedSum) * 100;
     return Math.round(accessibilityScore);
 };
-
-// async function elementPositioning(tagetedElement, page, path, index) {
-//     const target = tagetedElement.toString();
-//     const element = await page.$(target)
-
-//     if (element) {
-//         const boundingBox = await element.boundingBox()
-
-//         if (boundingBox !== null) {
-
-//             try {
-//                 await element.hover()
-
-//                 const screenshot = await page.screenshot({
-//                     clip: {
-//                         x: boundingBox.x + 50,
-//                         y: boundingBox.y + 50,
-//                         width: boundingBox.width + 20,
-//                         height: boundingBox.height + 20,
-//                     },
-//                     omitBackground: true, // remove the background
-
-//                 });
-//                 writeFileSync(join(path, index + '.png'), screenshot);
-
-//             } catch (error) {
-
-//                 if (error.message.includes('Node is either not clickable or not an HTMLElement')) {
-//                     const screenshot = await page.screenshot({
-//                         clip: {
-//                             x: boundingBox.x, // add a small margin to the left and right
-//                             y: boundingBox.y, // add a small margin to the top and bottom
-//                             width: boundingBox.width + 20,
-//                             height: boundingBox.height + 20,
-//                         },
-//                         omitBackground: true, // remove the background
-
-//                     });
-//                     writeFileSync(join(path, index + '.png'), screenshot);
-//                 }
-
-//             }
-//         }
-
-
-//     }
-//     else {
-//         console.log("not found")
-//     }
-// }

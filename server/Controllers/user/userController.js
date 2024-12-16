@@ -199,4 +199,4 @@ const passwordReset = (req, res) => {
 }
 
 
-module.exports = { logUser, registerUser, checkLogIn, passwordRecovery, logout, passwordReset }
+module.exports = { logUser, registerUser, checkLogIn, logout, passwordReset }
