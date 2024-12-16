@@ -37,7 +37,7 @@ app.disable('x-powered-by');
 
 //Routes
 app.use('/api/v1/generate', generate)
-app.use('/api/v1/', accessibilityCheckRoutes)
+app.use('/api/v1/checker', accessibilityCheckRoutes)
 app.use('/api/v1/user', UserRoutes)
 
 //err middleware
